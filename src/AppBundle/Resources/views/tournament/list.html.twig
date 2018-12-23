@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {{ dump(tournaments)}}
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Date</th>
+          <th>Adresse</th>
+          <th>Nbre Equipe</th>
+        </tr>
+      </thead>
+      {% for tournament in tournaments %}
+          <tr>
+            <td>{{ tournament.name }}</td>
+            <td>{{ tournament.dateStart|date('d/m/Y') }}</td>
+            <td>{{ tournament.city}}</td>
+            <td>{{ tournament.nbTeams}}</td>
+          </tr>
+      {% endfor %}
+    </table>
+
+{% endblock %}
