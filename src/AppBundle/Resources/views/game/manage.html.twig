@@ -1,0 +1,53 @@
+{% extends 'AppBundle:game:_template.html.twig' %}
+
+{% block bodyTeam %}
+
+<section class="grid-2 has-gutter">
+
+  {% if gameManager.teamsWithoutGroup %}
+    <div>
+        <h3 style="color: #005792">Equipes sans groupes</h3>
+        <ul class="allTeams">
+          {% for team in gameManager.teamsWithoutGroup %}
+              <li>
+                  {{ team.name}}
+              </li>
+          {% endfor %}
+        </ul>
+
+    </div>
+  {% endif %}
+
+  <div id="groupList">
+
+    <a href="{{ path('bindGroups', { 'tournamentId' : tournament.id })}}" class="btn--primary fullWidth">
+        Affecter automatiquement les groupes
+    </a>
+
+    <br/><br/>
+
+    {% for group in tournament.groups %}
+        <div class="groupName">
+            <h3>{{ group.name}}</h3>
+        </div>
+        <div class="teamsGroup">
+            <ul>
+              {% for team in group.teams %}
+                <li>
+                  {{team.name}}
+                </li>
+              {% endfor %}
+            </ul>
+        </div>
+
+    {% endfor %}
+  </div>
+  <br/><br/>
+  <a href="{{ path('validGroups', { 'tournamentId' : tournament.id })}}" class="btn--success fullWidth">
+      Verrouiller les groupes et créer les matchs
+  </a>
+
+</section>
+
+
+{% endblock %}

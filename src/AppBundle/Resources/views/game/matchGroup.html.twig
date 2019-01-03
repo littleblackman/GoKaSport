@@ -1,0 +1,70 @@
+{% extends 'AppBundle:game:_template.html.twig' %}
+
+{% block bodyTeam %}
+
+<div class="tabs js-tabs">
+  <nav class="tabs-menu">
+    <a href="#tab1" class="tabs-menu-link is-active">Matchs</a>
+    <a href="#tab2" class="tabs-menu-link">Classement</a>
+  </nav>
+
+  <div id="tab1" class="tabs-content-item groupList">
+
+      {% for group in tournament.groups %}
+          <div class="groupName">
+              <h3>{{ group.name}}</h3>
+          </div>
+          <div class="teamsGroup">
+              <ul>
+                {% for match in group.matchs %}
+                  <li>
+                    {{match.teamName('teamA')|raw}} -  {{match.teamName('teamB')|raw}}
+
+
+                    <span style="float: right; margin-left: 50px;">
+                        <a href="{{ path('showMatch', {id: match.id})}}">
+                            <i class="far fa-eye"></i>
+                        </a>
+                    </span>
+
+                    <span style="float: right">
+                        {{ match.score }}
+                    </span>
+
+                  </li>
+                {% endfor %}
+              </ul>
+          </div>
+
+      {% endfor %}
+  </div>
+  <div id="tab2" class="tabs-content-item" style="display: none">
+
+      {{ include('AppBundle:game:classement.html.twig', { "tournament" : tournament} ) }}
+
+  </div>
+
+  <script type="text/javascript">
+
+      $('.tabs-menu-link').click(function(){
+        let target = $(this).attr('href');
+        target = target.substr(1);
+
+        // hide all show target
+        $('.tabs-content-item').hide();
+        $('#'+target).show();
+
+        // change css on nav
+        $('.tabs-menu-link').removeClass('is-active');
+        $(this).addClass('is-active');
+
+        return false;
+
+      })
+
+  </script>
+
+
+</div>
+
+{% endblock %}

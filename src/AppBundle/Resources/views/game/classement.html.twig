@@ -1,0 +1,50 @@
+<table id="ranking" class="table table--zebra">
+  <thead>
+      <tr>
+        <th>Club</td>
+        <th class="rankingValue">MJ</th>
+        <th class="rankingValue">V</th>
+        <th class="rankingValue">N</th>
+        <th class="rankingValue">D</th>
+        <th class="rankingValue">BP</th>
+        <th class="rankingValue">BC</th>
+        <th class="rankingValue">DB</th>
+        <th class="rankingValue">PT</th>
+      </tr>
+  </thead>
+  <tbody>
+    {% set i = 0 %}
+    {% for ranking in tournament.rankings %}
+          {% set i = i + 1 %}
+          <tr>
+              <td style="color: #0275D8; font-weight: 800">{{ i }} - {{ ranking.team.name }}</td>
+              <td>{{ ranking.MJ}}</td>
+              <td>{{ ranking.V}}</td>
+              <td>{{ ranking.N}}</td>
+              <td>{{ ranking.D}}</td>
+              <td>{{ ranking.BP}}</td>
+              <td>{{ ranking.BC}}</td>
+              <td>{{ ranking.DB}}</td>
+              <td style="color: #0275D8">{{ ranking.PTS}}</td>
+          </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<section class="grid-6-small-2">
+    {% for group in tournament.groups %}
+        <div>
+            <h3>{{ group.name}}</h3>
+            <ol>
+              {% for ranking in group.rankings %}
+                  <li>
+                      {{ ranking.team.name }}
+                      <div style="float: right; width: 30px">
+                        {{ ranking.PTS}}
+                      </div>
+                  </li>
+              {% endfor %}
+            </ol>
+        <div>
+    {% endfor %}
+</section>

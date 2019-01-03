@@ -1,11 +1,90 @@
-{% extends 'base.html.twig' %}
+{% extends 'AppBundle:tournament:_template.html.twig' %}
 
-{% block body %}
+{% block bodyTournament %}
+  <h2>{{mode|capitalize}}</h2>
 
-  <h1>Formulaire d'ajout</h1>
 
-  {{ form_start(form)}}
-  {{ form_widget(form)}}
-  {{ form_end(form)}}
+  {{ form_start(form,  {'attr': {'id': 'edit-tournament'}}) }}
+    <div class="flex-container--column">
+        <div>
+          {{ form_label(form.name)}}
+          {{ form_widget(form.name)}}
+          {{ form_errors(form.name)}}
+        </div>
+
+        <div>
+          {{ form_label(form.description)}}
+          {{ form_widget(form.description)}}
+        </div>
+
+        <div>
+          {{ form_label(form.dateStart)}}
+          {{ form_widget(form.dateStart)}}
+          {{ form_errors(form.dateStart)}}
+
+        </div>
+
+        <div>
+          {{ form_label(form.address)}}
+          {{ form_widget(form.address)}}
+          {{ form_errors(form.address)}}
+
+        </div>
+
+        <div class="group">
+            <div>
+                {{ form_label(form.postalCode)}}
+                {{ form_widget(form.postalCode)}}
+                {{ form_errors(form.postalCode)}}
+
+            </div>
+
+            <div>
+                {{ form_label(form.city)}}
+                {{ form_widget(form.city)}}
+                {{ form_errors(form.city)}}
+
+            </div>
+        </div>
+
+        <div class="group">
+            <div>
+              {{ form_label(form.isOpen)}}
+              {{ form_widget(form.isOpen)}}
+            </div>
+            <div>
+              {{ form_label(form.isInit)}}
+              {{ form_widget(form.isInit)}}
+            </div>
+            <div>
+              {{ form_label(form.isValided)}}
+              {{ form_widget(form.isValided)}}
+            </div>
+        </div>
+
+        <div>
+          <br/>
+          <input type="submit" class="btn--inverse" value="{{mode}}" />
+        </div>
+
+    {{ form_end(form)}}
+
+    {% if tournamentId != 0 %}
+      <div>
+          <br/><br/>
+          <a href="{{ path('resetTournament', {'tournamentId' : tournamentId, 'type' : 'matchs'})}}" class="btn--warning fullWidth">
+            RESET MATCHS
+          </a>
+          <br/><br/>
+          <a href="{{ path('resetTournament', {'tournamentId' : tournamentId, 'type' : 'groups'})}}" class="btn--warning fullWidth">
+            RESET GROUPS
+          </a>
+          <br/><br/>
+          <a href="{{ path('resetTournament', {'tournamentId' : tournamentId, 'type' : 'teams'})}}" class="btn--warning fullWidth">
+            RESET TEAMS
+          </a>
+      </div>
+    {% endif %}
+
 
 {% endblock %}

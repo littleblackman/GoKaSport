@@ -1,0 +1,46 @@
+{% extends 'AppBundle:game:_template.html.twig' %}
+
+{% block bodyTeam %}
+  Welcome !
+  <br/>
+  Vous pouvez maintenant créer votre compétition.<br/>
+  <br/>
+  Vous avez {{ tournament.countNbTeams }} équipes participantes.<br/>
+  <br/>
+  Voici les différentes options:<br/>
+  <br/>
+  <form  action="{{ path('initGame')}}" method="post">
+      <input type="hidden" name="tournamentId" value="{{ tournament.id}}"/>
+      <ol>
+        {% for option in gameManager.gameOptions %}
+            <li class="liSelected">
+                <ul>
+                    <li>
+                        <input type="checkbox" name="gameOptionsId" value="{{ option.id}}" class="checkbox"/>
+                        &nbsp;&nbsp;&nbsp;
+                        <b>{{ option.nbTeamsRoundFinal }} équipes en phase finale</b>
+                    </li>
+                    {% if (option.nbGroupsFirstRound != 0) %}
+                      <li>+ {{ option.nbGroupsFirstRound }} groupes en phase de sélection</li>
+                      <li>+ {{ option.nbTeamsSelectedByGroups }} équipes restantes par groupe</li>
+                    {% endif %}
+                </ul>
+                <hr/>
+            </li>
+        {% endfor %}
+      </ol>
+      Sélectionnez votre choix et cliquez sur valider.<br/><br/>
+      <input type="checkbox" name="resetForce" value="1" class="checkbox"/>
+      &nbsp;&nbsp;&nbsp;
+      Forcer la création
+      <br/><br/>
+      <input type="submit" class="btn--primary fullWidth" value="Valider"/>
+  </form>
+
+  {% if tournament.isInit == 1 %}
+    <br/>
+    <a href="{{ path('manageGame', {'tournamentId' : tournament.id })}}" class="btn--success fullWidth">
+      Gérer la compétition
+    </a>
+  {% endif %}
+{% endblock %}

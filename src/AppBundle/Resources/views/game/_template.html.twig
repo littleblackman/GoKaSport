@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="subMenu">
+        <h1>{{tournament.name}}</h1>
+        {% if(tournament.isOpen == 0 and tournament.isValided == 1) %}
+          <div style="float: right">
+              <a href="{{ path('openTournament', {'tournamentId' : tournament.id})}}" class="btn--success">
+                OPEN TOURNAMENT
+              </a>
+          </div>
+        {% endif %}
+    </div>
+  <hr/>
+
+  <div id="subBody">
+
+      {% for label, messages in app.flashes %}
+          {% for message in messages %}
+              <div class="flashMessage flash-{{ label }}">
+                  {{ message|raw }}
+              </div>
+          {% endfor %}
+      {% endfor %}
+
+      {% block bodyTeam %}
+      {% endblock %}
+  </div>
+
+
+{% endblock %}

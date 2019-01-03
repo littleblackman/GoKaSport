@@ -1,0 +1,34 @@
+<span id="navigationControl">
+  <i class="fas fa-align-left"></i>
+</span>
+
+<img src="{{ asset('etsik/Logo_ETSIK_noir-solo.png')}}" id="logoEtsik" />
+<h1 style="float: right; margin-right: 40%">GoKaSport</h1>
+
+
+<nav id="navigation" role="navigation">
+  <ul>
+      <li>
+        <a href="{{ path('listTournament')}}">Tournoi</a>
+      </li>
+      <li>
+        <a href="{{ path('listTeam')}}">Equipe</a>
+      </li>
+  </ul>
+</nav>
+
+
+<script type="text/javascript">
+  $('#navigation').hide();
+  $('#navigationControl').click(function() {
+    let status = $('#navigation').css('display');
+    if( status == 'none')
+    {
+      $('#navigation').show("slow");
+      $("#navigationControl").html("<i class='fas fa-times'></i>");
+    } else {
+      $('#navigation').hide("slow");
+      $("#navigationControl").html("<i class='fas fa-align-left'></i>");
+    }
+  })
+</script>

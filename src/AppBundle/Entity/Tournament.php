@@ -3,6 +3,14 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use AppBundle\Validation\DateTournament as DateTournament;
+use AppBundle\Entity\Team;
+use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\Entity\TournamentGroup;
+use AppBundle\Entity\TournamentRanking;
+use AppBundle\Entity\TournamentFinalRound;
+use AppBundle\Entity\GameOptions;
 
 /**
  * Tournament
@@ -23,7 +31,11 @@ class Tournament
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 2,
+     *      minMessage = "Le nom doit avoir au moins {{ limit }} caractère"
+     * )
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
@@ -37,7 +49,7 @@ class Tournament
 
     /**
      * @var \DateTime
-     *
+     * @DateTournament
      * @ORM\Column(name="dateStart", type="date")
      */
     private $dateStart;
@@ -73,24 +85,67 @@ class Tournament
     /**
      * @var bool
      *
-     * @ORM\Column(name="hasRound", type="boolean", nullable=true)
-     */
-    private $hasRound;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="nbTeams", type="integer", nullable=true)
-     */
-    private $nbTeams;
-
-    /**
-     * @var bool
-     *
      * @ORM\Column(name="isOpen", type="boolean", nullable=true)
      */
     private $isOpen;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_init", type="boolean", nullable=true)
+     */
+    private $isInit;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_valided", type="boolean", nullable=true)
+     */
+    private $isValided;
+
+    /**
+     *
+     * @ORM\ManyToMany(targetEntity="Team", inversedBy="tournaments")
+     * @ORM\JoinTable(name="tournaments_teams")
+     */
+    private $teams;
+
+    /**
+    * @var ArrayCollection
+    * @ORM\OneToMany(targetEntity="TournamentGroup", mappedBy="tournament", cascade={"persist", "remove"}))
+    */
+    private $groups;
+
+    /**
+    * @var ArrayCollection
+    * @ORM\OneToMany(targetEntity="TournamentFinalRound", mappedBy="tournament", cascade={"persist", "remove"}))
+    */
+    private $finalRounds;
+
+    /**
+    * @var ArrayCollection
+    * @ORM\OneToMany(targetEntity="TournamentRanking", mappedBy="tournament", cascade={"persist", "remove"}))
+    * @ORM\OrderBy({"pTS" = "DESC", "bP" = "DESC"})
+    */
+    private $rankings;
+
+    /**
+    * @ORM\ManyToOne(targetEntity="GameOptions")
+    * @ORM\JoinColumn(name="game_options_id", referencedColumnName="id")
+    */
+    private $gameOptions;
+
+
+    public function __construct()
+    {
+        $this->teams = new ArrayCollection();
+        $this->rankings = new ArrayCollection();
+        $this->groups = new ArrayCollection();
+
+        if(!$this->getId()) $this->setIsInit(0);
+        if(!$this->getId()) $this->setIsValided(0);
+
+    }
 
     /**
      * Get id
@@ -270,52 +325,9 @@ class Tournament
         return $this->postalCode;
     }
 
-    /**
-     * Set hasRound
-     *
-     * @param boolean $hasRound
-     *
-     * @return Tournament
-     */
-    public function setHasRound($hasRound)
+    public function countNbTeams()
     {
-        $this->hasRound = $hasRound;
-
-        return $this;
-    }
-
-    /**
-     * Get hasRound
-     *
-     * @return bool
-     */
-    public function getHasRound()
-    {
-        return $this->hasRound;
-    }
-
-    /**
-     * Set nbTeams
-     *
-     * @param integer $nbTeams
-     *
-     * @return Tournament
-     */
-    public function setNbTeams($nbTeams)
-    {
-        $this->nbTeams = $nbTeams;
-
-        return $this;
-    }
-
-    /**
-     * Get nbTeams
-     *
-     * @return int
-     */
-    public function getNbTeams()
-    {
-        return $this->nbTeams;
+        return count($this->getTeams());
     }
 
     /**
@@ -340,5 +352,131 @@ class Tournament
     public function getIsOpen()
     {
         return $this->isOpen;
+    }
+
+    /**
+     * Set isInit
+     *
+     * @param boolean $isInit
+     *
+     * @return Tournament
+     */
+    public function setIsInit($isInit)
+    {
+        $this->isInit = $isInit;
+
+        return $this;
+    }
+
+    /**
+     * Get isInit
+     *
+     * @return bool
+     */
+    public function getIsInit()
+    {
+        return $this->isInit;
+    }
+
+    /**
+     * Set $isValided
+     *
+     * @param boolean $isValided
+     *
+     * @return Tournament
+     */
+    public function setIsValided($isValided)
+    {
+        $this->isValided = $isValided;
+
+        return $this;
+    }
+
+    /**
+     * Get isValided
+     *
+     * @return bool
+     */
+    public function getIsValided()
+    {
+        return $this->isValided;
+    }
+
+
+    public function addTeam($team)
+    {
+        $this->teams[] = $team;
+        $team->addTournament($this);
+        return $this;
+    }
+
+    public function removeTeam($team)
+    {
+        $this->teams->removeElement($team);
+        return $this;
+    }
+
+
+    public function getTeams()
+    {
+        return $this->teams;
+    }
+
+    public function addGroup(TournamentGroup $group)
+    {
+        $this->groups[] = $group;
+        $group->setTournament($this);
+        return $this;
+    }
+
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
+    public function addFinalRound(TournamentFinalRound $finalRound)
+    {
+        $this->finalRounds[] = $finalRound;
+        $finalRound->setTournament($this);
+        return $this;
+    }
+
+    public function getFinalRounds()
+    {
+        return $this->finalRounds;
+    }
+
+    public function addRanking(TournamentRanking $ranking)
+    {
+        $this->rankings[] = $ranking;
+        $ranking->setTournament($this);
+        return $this;
+    }
+
+    public function removeRanking(TournamentRanking $ranking)
+    {
+        $this->rankings->removeElement($ranking);
+        return $this;
+    }
+
+    public function getRankings()
+    {
+        return $this->rankings;
+    }
+
+    public function setGameOptions(GameOptions $gameOptions)
+    {
+        $this->gameOptions = $gameOptions;
+        return $this;
+    }
+
+    public function getGameOptions()
+    {
+        return $this->gameOptions;
+    }
+
+    public function getMatchPerGroup()
+    {
+        return $this->getGameOptions()->getMatchPerGroup();
     }
 }

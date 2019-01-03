@@ -1,0 +1,200 @@
+{% extends 'AppBundle:match:_template.html.twig' %}
+
+{% block bodyMatch %}
+
+    <button class="btn--primary fullWidth" id="startButton" style="cursor: pointer">Démarrer le match</button>
+
+    <div id="boardMatch" class="clearfix" style="display:none">
+        <div id="time" style="width: 20%" class="fl">
+          <span id="minuteStart">_</span>:<span id="secondeStart">_</span>
+        </div>
+        <div id="score" style="width: 20%; text-align: right" class="fr">
+          <span id="pointA">0</span>
+            :
+          <span id="pointB">0</span>
+        </div>
+        <div id="iconTime" class="center" style="width: 40%; color: #5CB85C; font-size: 14px; font-style: italic">
+            <span id="timeStart">
+              {{ match.timeStart|date("H:i")}}
+              {% if(match.timeEnd) %}
+                &nbsp;-&nbsp;
+                {{ match.timeEnd|date("H:i") }}
+              {% endif %}
+            </span>
+        </div>
+    </div>
+    <hr style="float: none"/>
+
+    <section class="grid-2-small-2">
+      <div class="teamMatch">
+          <h2>{{ match.teamA.name }}</h2>
+          <h2 id="scoreA" style="float: right">0</h2>
+          <hr style="float: none"/>
+          <i class="fas fa-plus-square plusButton" id="plusTeam-A" style='font-size: 60px; color:#5CB85C; cursor: pointer'></i>
+          <i class="fas fa-minus-square minusButton" id="minusTeam-A" style='font-size: 60px; color:#D9534F; cursor: pointer; float: right'></i>
+      </div>
+      <div class="teamMatch">
+          <h2>{{ match.teamB.name }}</h2>
+          <h2 id="scoreB" style="float: right">0</h2>
+          <hr style="float: none"/>
+          <i class="fas fa-plus-square plusButton" id="plusTeam-B" style='font-size: 60px; color:#5CB85C; cursor: pointer'></i>
+          <i class="fas fa-minus-square minusButton" id="minusTeam-B" style='font-size: 60px; color:#D9534F; cursor: pointer; float: right'></i>
+
+      </div>
+    </section>
+
+    <br/><br/>
+    <form action="{{ path('endMatch')}}" method="post">
+        <input type="hidden" name="match_id" value="{{ match.id}}"/>
+        <input type="hidden" name="score" id="inputScore" value=""/>
+        <input type="hidden" name="winner" id="inputWinner" value=""/>
+        <input type="submit" class="btn--success fullWidth" id="validButton" style="cursor: pointer; display: none" value="Valider le résultat" />
+    </form>
+
+    <button class="btn--warning fullWidth" id="pauseButton" style="cursor: pointer; display: none">PAUSE</button>
+    <br/><br/><br/>
+    <button class="btn--danger fullWidth" id="endButton" style="cursor: pointer; display: none">Fin du match</button>
+
+
+    <script type="text/javascript">
+
+        var mStatus = "{{ match.status}}";
+
+        if(mStatus == 'END')
+        {
+            var pointA = "{{ match.pointA }}";
+            var pointB = "{{ match.pointB }}";
+
+            $('#boardMatch').show();
+            $('#startButton').hide();
+            $('#time').hide();
+            $('.plusButton').hide();
+            $('.minusButton').hide();
+
+
+            $('#pointA').html(pointA);
+            $('#scoreA').html(pointA);
+            $('#pointB').html(pointB);
+            $('#scoreB').html(pointB);
+
+        }
+
+        sessionStorage.setItem('status', 'waiting');
+
+        $('#startButton').click(function() {
+            $.ajax({
+                      method: "GET",
+                      url: "{{ path('startMatch')}}",
+                      data: { id: "{{ match.id}}" }
+                  })
+                  .done(function( data ) {
+
+                      // hide and show
+                      $('#boardMatch').show();
+                      $('#startButton').hide();
+                      $('#pauseButton').show();
+                      $('#endButton').show();
+
+                      // set time
+                      sessionStorage.setItem('timeStart', data.timeStart);
+                      $('#timeStart').html(data.timeStart);
+
+                      $('#minuteStart').html(0);
+                      $('#secondeStart').html(0);
+
+                      let timerId = setInterval(timerCD, 1000);
+                      sessionStorage.setItem('timerId', timerId);
+                      sessionStorage.setItem('status', 'start');
+                  });
+        })
+
+        $('#pauseButton').click(function() {
+            let value = $('#pauseButton').html();
+
+            if(value == 'PAUSE')
+            {
+              let timerId = sessionStorage.getItem('timerId');
+              clearInterval(timerId);
+              $('#pauseButton').html('RESTART');
+              sessionStorage.setItem('status', 'pause');
+
+            } else {
+              let timerId = setInterval(timerCD, 1000);
+              sessionStorage.setItem('timerId', timerId);
+              $('#pauseButton').html('PAUSE');
+              sessionStorage.setItem('status', 'start');
+
+            }
+
+        })
+
+        $('#endButton').click(function() {
+            let timerId = sessionStorage.getItem('timerId');
+            clearInterval(timerId);
+            $('#pauseButton').hide();
+            $('#endButton').hide();
+            $('#validButton').show();
+            sessionStorage.setItem('status', 'end');
+
+
+        })
+
+        $('.plusButton').click(function() {
+            let status = sessionStorage.getItem('status');
+            if(status != 'waiting')
+            {
+              let teamId = $(this).attr('id').split('-')[1].toUpperCase();
+              let score = parseInt($('#point'+teamId).html());
+              score = score + 1;
+              $('#point'+teamId).html(score);
+              $('#score'+teamId).html(score);
+            }
+        })
+
+        $('.minusButton').click(function() {
+            let status = sessionStorage.getItem('status');
+            if(status != 'waiting')
+            {
+              let teamId = $(this).attr('id').split('-')[1].toUpperCase();
+              let score = parseInt($('#point'+teamId).html());
+              score = score - 1;
+              if(score < 0) { score = 0};
+              $('#point'+teamId).html(score);
+              $('#score'+teamId).html(score);
+            }
+        })
+
+        $('#validButton').click(function() {
+          let scoreA = parseInt($('#pointA').html());
+          let scoreB = parseInt($('#pointB').html());
+
+          let winner = "none";
+
+          if(scoreA > scoreB) {
+            winner = "teamA";
+          }
+
+          if(scoreB > scoreA) {
+            winner = "teamB";
+          }
+
+          $('#inputWinner').val(winner);
+          $('#inputScore').val(scoreA+'-'+scoreB);
+
+        })
+
+        function timerCD() {
+            let minute  = parseInt($('#minuteStart').html());
+            let seconde = parseInt($('#secondeStart').html());
+            seconde = seconde + 1;
+            if(seconde == 60) {
+               seconde = 0;
+               minute = minute + 1;
+            }
+            $('#minuteStart').html(minute);
+            $('#secondeStart').html(seconde);
+        }
+
+    </script>
+
+{% endblock %}

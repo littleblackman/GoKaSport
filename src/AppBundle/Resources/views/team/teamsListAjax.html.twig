@@ -1,0 +1,17 @@
+<ul id="searchTeamsList">
+  {% for team in teams %}
+    <li class="searchTeamName" id="searchTeamId-{{team.id}}">{{ team.name}}</li>
+  {% endfor %}
+</ul>
+
+<script type="text/javascript">
+  $('.searchTeamName').click(function() {
+
+      var url = "{{ path('addTeam')}}";
+      var tournamentId = sessionStorage.getItem('tournamentId');
+      var teamId = $(this).attr('id').split('-')[1];
+      $('#searchTeamsList').html(' ');
+
+      $('#teamList').load(url+'/'+tournamentId+'/'+teamId);
+  })
+</script>

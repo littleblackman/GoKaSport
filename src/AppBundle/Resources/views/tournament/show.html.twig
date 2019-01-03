@@ -1,0 +1,38 @@
+{% extends 'AppBundle:tournament:_template.html.twig' %}
+
+{% block bodyTournament %}
+    <h2>{{tournament.name}}</h2>
+
+    <h3>Détails</h3>
+    <div class="details"></div>
+    <hr/>
+    <h3>Liste des Equipes</h3>
+    <hr/>
+    <div id="teamList">
+      {% include 'AppBundle:tournament:teamsList.html.twig' with {'teams': tournament.teams} %}
+    </div>
+    <br/>
+    <input type="text" name="team" placeholder="ajouter une équipe" class="fullWidth" id="addTeam"/>
+
+    <div id="searchResult">
+    </div>
+
+    <br/><br/>
+    <a href="{{ path('createGame', {'tournamentId' : tournament.id })}}" class="btn--primary fullWidth">
+      Initier la compétition
+    </a>
+
+    <script type="text/javascript">
+
+        sessionStorage.removeItem('tournamentId');
+        sessionStorage.setItem('tournamentId', "{{tournament.id}}");
+        var url = "{{ path('teamsListAjax')}}";
+        $('#addTeam').keyup(function() {
+            var search = $('#addTeam').val();
+            if(search.length > 1) {
+                $('#searchResult').load(url+'/'+search);
+            }
+        })
+    </script>
+
+{% endblock %}

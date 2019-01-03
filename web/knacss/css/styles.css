@@ -1,17 +1,92 @@
-/* Votre Style */
-
-ul {
-  background: #bbb;
-}
-li, [class*="grid"] > * {
-  background: #ccc;
-}
+/* default style */
 header, footer {
-  background: #ddd;
+  background: #7acfdf;
 }
 main {
-  background: #eee;
+  background: #fde3d9;
 }
 aside {
   background: #aaa;
 }
+
+body { background: #fde3d9 }
+
+body { font-family: 'Montserrat', sans-serif;}
+h1, h2, h3, h4, h5 { font-family: 'Lora', serif }
+
+h1 { font-size: 1.6em}
+h2 { font-size: 1.4em}
+h3 { font-size: 1.2em}
+
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.fullWidth { width: 100%}
+
+a:link { text-decoration:none}
+
+.italicDetails { font-style: italic; font-size: 0.9em;}
+
+/* navigation */
+#navigationControl { font-size: 2em; pointer: cursor}
+#navigation li { font-size: 1.3em; font-family: Roboto}
+#navigation li a {color: #d1f4fa}
+#navigation li a:hover {color: white}
+
+#logoEtsik { width: 40px; height: 40px; float: right}
+
+/* flash message */
+.flashMessage { padding: 14px; font-weight: bold; margin-bottom: 10px;}
+.flash-error { border: 2px solid #D9534F; background-color: #F0AD4E; color: black}
+
+/* submenu */
+.subMenu h1 { float: left; display: inline;}
+.subMenu a { float: right; font-size: 1.2em; padding: 10px;}
+.subMenu a:hover { background-color: #53cde2; color: #005792}
+
+/* subBody */
+#subBody h2 { text-align: center}
+
+/* tournament form */
+#edit-tournament input, #edit-tournament textarea, #edit-tournament select { width: 100%}
+
+#tournament_dateStart { display: flex; flex-direction: row;}
+#edit-tournament .group { display: flex; flex-direction: row; justify-content:space-between;}
+#edit-tournament .group input,  #edit-tournament .group select{ width: 100%; }
+
+/* team form */
+#edit-team input, #edit-team textarea, #edit-team select { width: 100%}
+
+/* team ajax list */
+#searchTeamsList { width: 100%; background-color: #f47645}
+#searchTeamsList > li { border-bottom: 1px solid grey; padding-top: 4px; padding-bottom: 4px; font-size: 1.2em; cursor: pointer}
+
+/* create game */
+.liSelected { padding-left: 10px}
+.liSelected:hover { cursor: pointer; background-color: #d1f4fa}
+
+/* manage game */
+#groupList div { border: 1px solid black}
+#groupList .groupName { background-color: #f47645; padding: 10px; cursor: pointer}
+#groupList .groupName:hover { background-color: #d1f4fa }
+#groupList .teamsGroup ul > li { padding-left: 10px }
+
+.allTeams > li { border-top: 1px solid grey; padding: 4px 0px 4px 0px; cursor: pointer;}
+
+.winner { font-weight: 400; color: #0275D8}
+
+/* show match */
+.blueTitle {color: #0275D8}
+.matchH1 { float: none; display: block; text-align: center }
+.teamMatch { padding: 10px; border: 3px solid #F0AD4E; margin-top: 10px}
+.teamMatch h2 { float: left; }
+.teamMatch .score { float: right; }
+#boardMatch { font-size: 20px;}
+
+/* ranking */
+.rankingValue { width: 25px }
+.ranking { font-size: 10px;}
+#ranking tr th { background-color:  #0275D8; color: white; padding: 2px}

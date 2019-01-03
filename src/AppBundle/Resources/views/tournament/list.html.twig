@@ -1,25 +1,22 @@
-{% extends 'base.html.twig' %}
+{% extends 'AppBundle:tournament:_template.html.twig' %}
 
-{% block body %}
+{% block bodyTournament %}
 
-    {{ dump(tournaments)}}
-    <table>
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Date</th>
-          <th>Adresse</th>
-          <th>Nbre Equipe</th>
-        </tr>
-      </thead>
-      {% for tournament in tournaments %}
-          <tr>
-            <td>{{ tournament.name }}</td>
-            <td>{{ tournament.dateStart|date('d/m/Y') }}</td>
-            <td>{{ tournament.city}}</td>
-            <td>{{ tournament.nbTeams}}</td>
-          </tr>
-      {% endfor %}
-    </table>
+    {% for tournament in tournaments %}
+        <h3>
+            {{tournament.name}}
+            <a href="{{ path('delTournament', {id: tournament.id})}}" style="float: right; font-weight: normal;">
+                <i class="far fa-trash-alt"></i>
+            </a>
+            <a href="{{ path('editTournament', {id: tournament.id})}}" style="float: right; font-weight: normal; margin-right: 20px">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{{ path('showTournament', {id: tournament.id})}}" style="float: right; font-weight: normal; margin-right: 20px">
+                <i class="far fa-eye"></i>
+            </a>
 
+        </h3>
+        <div class="italicDetails">{{tournament.city~' - '~tournament.dateStart|date('d/m/Y')  }}</div>
+        <hr/>
+    {% endfor %}
 {% endblock %}

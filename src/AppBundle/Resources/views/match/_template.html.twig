@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <a href="{{ path('showMatchGroup', {'tournamentId' : match.group.tournament.id})}}" style="float: left; font-size: 20px">
+
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="matchH1">
+          <span class="blueTitle">
+              {{ match.teamA.name }}
+          </span>
+          &nbsp;vs&nbsp;
+          <span class="blueTitle">
+              {{ match.teamB.name }}
+          </span>
+        </h1>
+    </div>
+  <hr/>
+
+  <div id="subBody">
+      {% block bodyMatch %}
+      {% endblock %}
+  </div>
+
+
+{% endblock %}

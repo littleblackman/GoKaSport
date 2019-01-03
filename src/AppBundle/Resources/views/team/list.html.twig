@@ -1,0 +1,31 @@
+{% extends 'AppBundle:team:_template.html.twig' %}
+
+{% block bodyTeam %}
+
+    {% for team in teams %}
+        <h3 class="teamName">
+            {{team.name}}
+            <a href="{{ path('editTeam', {id: team.id})}}" style="float: right">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a href="{{ path('delTeam', {id: team.id})}}" style="float: right">
+              <i class="far fa-trash-alt"></i>
+            </a>
+        </h3>
+        <div class="playersList" style="display: none">
+            <ul>
+            {% for player in team.players %}
+                <li>{{ player.firstName~' '~player.lastName}}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+
+
+    <script type="text/javascript">
+        $('.teamName').on('click', function(){
+            $(this).next().toggle();
+        })
+    </script>
+
+{% endblock %}
