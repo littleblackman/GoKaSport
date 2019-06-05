@@ -14,7 +14,7 @@ use AppBundle\Service\GameManager;
 class TournamentController extends Controller
 {
     /**
-     * @Route("/liste-des-competitions", name="listTournament")
+     * @Route("/liste-des-competitions.html", name="listTournament")
      */
     public function indexAction(Request $request)
     {
@@ -41,9 +41,13 @@ class TournamentController extends Controller
           $id = 0;
         }
 
+        // création du form avec un objet
         $form = $this->createForm(TournamentType::class, $tournament);
+
+        // on récupère les valeurs de la request et on hydrate l'objet SI POSSIBLE
         $form->handleRequest($request);
 
+        // le form vérifie si l'objet est valide (via le validator) et si c submit via la request
         if($form->isValid() && $form->isSubmitted())
         {
             $em->persist($tournament);
@@ -51,6 +55,7 @@ class TournamentController extends Controller
             return $this->redirectToRoute('listTournament');
 
         }
+        // l'objet est renvoyé avec son contenu (widget, label, errors => Type)
         return $this->render('AppBundle:tournament:edit.html.twig', ['form' => $form->createView(), 'mode' => $mode, 'tournamentId' => $id]);
     }
 

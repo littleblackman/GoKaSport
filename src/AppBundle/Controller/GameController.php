@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use AppBundle\Entity\Tournament;
 use AppBundle\Entity\GameOptions;
+
 use AppBundle\Service\GameManager;
 
 class GameController extends Controller

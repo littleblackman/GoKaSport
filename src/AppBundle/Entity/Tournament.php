@@ -3,14 +3,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use AppBundle\Validation\DateTournament as DateTournament;
-use AppBundle\Entity\Team;
-use Doctrine\Common\Collections\ArrayCollection;
+
 use AppBundle\Entity\TournamentGroup;
 use AppBundle\Entity\TournamentRanking;
 use AppBundle\Entity\TournamentFinalRound;
 use AppBundle\Entity\GameOptions;
+use AppBundle\Entity\Team;
 
 /**
  * Tournament
@@ -34,7 +36,7 @@ class Tournament
      * @Assert\NotBlank
      * @Assert\Length(
      *      min = 2,
-     *      minMessage = "Le nom doit avoir au moins {{ limit }} caractère"
+     *      minMessage = "Le nom doit avoir au moins {{ limit }} caractères"
      * )
      * @ORM\Column(name="name", type="string", length=255)
      */
@@ -134,7 +136,6 @@ class Tournament
     * @ORM\JoinColumn(name="game_options_id", referencedColumnName="id")
     */
     private $gameOptions;
-
 
     public function __construct()
     {

@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Service;
+
 use AppBundle\Entity\Tournament;
 use AppBundle\Entity\Match;
 use Doctrine\ORM\EntityManagerInterface;
@@ -163,7 +164,8 @@ class GameManager
   }
 
   /**
-   *
+   * dispatch all teams in all groups
+   * with a random function
    */
   public function autoBindGroups()
   {
@@ -197,9 +199,6 @@ class GameManager
             if($i > $tournament->getGameOptions()->getNbGroupsFirstRound()) $i = 0;
         }
       }
-
-
-
       $em->flush();
 
   }

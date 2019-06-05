@@ -59,7 +59,7 @@ class Team
      */
     private $sportClass;
 
-    /**
+   /**
     * @var ArrayCollection
     * @ORM\OneToMany(targetEntity="Player", mappedBy="team", cascade={"persist", "remove"})
     */

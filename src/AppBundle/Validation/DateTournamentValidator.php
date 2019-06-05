@@ -7,7 +7,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class DateTournamentValidator extends ConstraintValidator
 {
-
+    // $value = la valeur du champs vérifié
     public function validate($value, Constraint $constraint)
     {
         $today = new \DateTime('today');
