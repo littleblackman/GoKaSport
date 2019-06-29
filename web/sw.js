@@ -1,4 +1,4 @@
-let cacheName = "GizMo-v1";
+let cacheName = "Goome-v1";
 
 this.addEventListener("fetch", event => {
   event.respondWith(

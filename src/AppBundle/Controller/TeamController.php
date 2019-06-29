@@ -9,7 +9,6 @@ use AppBundle\Entity\Team;
 use AppBundle\Entity\Player;
 use AppBundle\Form\TeamType;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 
 class TeamController extends Controller
@@ -63,8 +62,6 @@ class TeamController extends Controller
 
             $em->persist($team);
             $em->flush();
-
-            $this->get('event_dispatcher')->dispatch('create_team', new GenericEvent($team));
 
             return $this->redirectToRoute('listTeam');
         }

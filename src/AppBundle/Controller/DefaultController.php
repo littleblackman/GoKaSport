@@ -22,16 +22,5 @@ class DefaultController extends Controller
         return $this->render('AppBundle:default:home.html.twig');
     }
 
-    /**
-     * @Route("/maroute", name="maroute")
-     */
-    public function maroute(Request $request, Session $session)
-    {
-
-
-        return $this->render('AppBundle:default:home.html.twig', array('title' => '<b>mon titre</b>'));
-    }
-
-
 
 }

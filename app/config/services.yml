@@ -14,16 +14,6 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
-    MyLogActivityListener:
-        class: AppBundle\Listener\MyLogActivityListener
-        tags:
-          - { name: kernel.event_listener, event:kernel.request, method: onKernelRequest }
-
-    MyTeamListener:
-        class: AppBundle\Listener\MyTeamListener
-        tags:
-            - { name: kernel.event_listener, event: create_team, method: sendMail}
-
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     AppBundle\:
