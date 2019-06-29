@@ -1,23 +1,32 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap');
 /* default style */
 header, footer {
-  background: #7acfdf;
+  background: #caf2d7;
+  color: black;
 }
-main {
-  background: #fde3d9;
+
+header { position: relative; box-shadow: 0px 4px 20px black}
+
+html, main {
+  background: #60a9a6;
 }
 aside {
-  background: #aaa;
+  background: #fafafa;
 }
 
-body { background: #fde3d9 }
+body { background: #fafafa ; font-family: 'Lato', sans-serif;}
+h1, h2, h3, h4, h5 { font-family: 'Lato', sans-serif; }
 
-body { font-family: 'Montserrat', sans-serif;}
-h1, h2, h3, h4, h5 { font-family: 'Lora', serif }
-
-h1 { font-size: 1.6em}
+h1 { font-weight: 700; font-size: 3em; color: white}
 h2 { font-size: 1.4em}
 h3 { font-size: 1.2em}
 
+h1 span { font-weight: 400; font-size: 0.8em}
+
+.button { padding: 20px; background-color: #caf2d7; box-shadow: 0px 4px 4px black; text-align: center;}
+.button { font-size: 1.3em}
+
+p { font-size: 1.2em; text-align: justify;}
 
 ul {
   list-style: none;
@@ -31,12 +40,18 @@ a:link { text-decoration:none}
 .italicDetails { font-style: italic; font-size: 0.9em;}
 
 /* navigation */
+#navigation { background: #caf2d7; width: 100%; position: absolute; z-index: 99; left: 0px; padding: 10px;}
 #navigationControl { font-size: 2em; pointer: cursor}
-#navigation li { font-size: 1.3em; font-family: Roboto}
-#navigation li a {color: #d1f4fa}
-#navigation li a:hover {color: white}
+#navigation li { font-size: 1.4em; cursor: pointer}
+#navigation li a {color: black; }
+#navigation li a:hover {color: brown}
 
 #logoEtsik { width: 40px; height: 40px; float: right}
+
+
+/* homepage */
+
+
 
 /* flash message */
 .flashMessage { padding: 14px; font-weight: bold; margin-bottom: 10px;}

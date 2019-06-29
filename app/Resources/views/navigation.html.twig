@@ -2,17 +2,25 @@
   <i class="fas fa-align-left"></i>
 </span>
 
-<img src="{{ asset('etsik/Logo_ETSIK_noir-solo.png')}}" id="logoEtsik" />
-<h1 style="float: right; margin-right: 40%">GoKaSport</h1>
-
+<img src="{{ asset('etsik/Logo_ETSIK_noir-solo.png')}}" id="logoEtsik" alt="Logo ETSIK - Numérique" />
 
 <nav id="navigation" role="navigation">
   <ul>
       <li>
-        <a href="{{ path('listTournament')}}">Tournoi</a>
+        <i class="fas fa-home"></i>
+        <a href="{{ path('homepage')}}">Home</a>
       </li>
       <li>
-        <a href="{{ path('listTeam')}}">Equipe</a>
+        <i class="fas fa-trophy"></i>
+        <a href="{{ path('listTournament')}}">Tournois</a>
+      </li>
+      <li>
+        <i class="fas fa-chess"></i>
+        <a href="{{ path('listTeam')}}">Equipes</a>
+      </li>
+      <li>
+        <i class="fas fa-laptop-code"></i>
+        <a href="#">Connexion</a>
       </li>
   </ul>
 </nav>
@@ -24,10 +32,10 @@
     let status = $('#navigation').css('display');
     if( status == 'none')
     {
-      $('#navigation').show("slow");
+      $('#navigation').slideDown();
       $("#navigationControl").html("<i class='fas fa-times'></i>");
     } else {
-      $('#navigation').hide("slow");
+      $('#navigation').slideUp();
       $("#navigationControl").html("<i class='fas fa-align-left'></i>");
     }
   })

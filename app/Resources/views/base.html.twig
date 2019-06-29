@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>{% block titre %}myTournament{% endblock %}</title>
+  <title>{% block titre %}GizMo - L'application de gestion de tournois{% endblock %}</title>
     <link rel="stylesheet" href="{{ asset('knacss/css/knacss.css')}} " media="all">
     <link rel="stylesheet" href="{{ asset('knacss/css/styles.css')}}" media="all">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
@@ -12,16 +12,57 @@
       src="https://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
       crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css?family=Lora|Montserrat:200,300,400" rel="stylesheet">
+
+    <link rel="manifest" href="{{ asset('manifest.json')}}">
+    <!-- Chrome -->
+    <link rel="icon" sizes="192x192" href="{{ asset('manifest/icons/icon-192x192.png')}}">
+    <!-- Safari -->
+    <link rel="apple-touch-startup-image" href="{{ asset('manifest/icons/icon-512x512.png')}}">
+    <!-- Chrome -->
+    <meta name="theme-color" content="#182d60">
+    <!-- Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Apple --->
+
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('manifest/icons/icon-152x152.png')}}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('manifest/icons/icon-192x192.png')}}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ asset('manifest/icons/icon-152x152.png')}}">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link href="{{ asset('manifest/apple_splash/apple_splash_2048.png')}}" sizes="2048x2732" rel="apple-touch-startup-image" />
+    <link href="{{ asset('manifest/apple_splash/apple_splash_1668.png')}}" sizes="1668x2224" rel="apple-touch-startup-image" />
+    <link href="{{ asset('manifest/apple_splash/apple_splash_1536.png')}}" sizes="1536x2048" rel="apple-touch-startup-image" />
+    <link href="{{ asset('manifest/apple_splash/apple_splash_1125.png')}}" sizes="1125x2436" rel="apple-touch-startup-image" />
+    <link href="{{ asset('manifest/apple_splash/apple_splash_1242.png')}}" sizes="1242x2208" rel="apple-touch-startup-image" />
+    <link href="{{ asset('manifest/apple_splash/apple_splash_750.png')}}" sizes="750x1334" rel="apple-touch-startup-image" />
+    <link href="{{ asset('manifest/apple_splash/apple_splash_640.png')}}" sizes="640x1136" rel="apple-touch-startup-image" />
+
+
+
   </head>
   <body>
 
-  <header id="header" role="banner" class="pam">
-    {% include('navigation.html.twig')%}
-  </header>
-  <main id="main" role="main" class="pam">
-    {% block body %}{% endblock %}
-  </main>
+    <header id="header" role="banner" class="pam">
+      {% include('navigation.html.twig')%}
+    </header>
+    <main id="main" role="main" class="pam">
+      {% block body %}{% endblock %}
+    </main>
+
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(function(reg) {
+          // registration worked
+          console.log('Registration succeeded');
+        }).catch(function(error) {
+          // registration failed
+          console.log('Registration failed with ' + error);
+        });
+      };
+    </script>
+
 
   </body>
 </html>
