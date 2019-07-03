@@ -1,0 +1,20 @@
+<ul id="searchUsersList">
+  {% for user in users %}
+    <li class="searchUserName" id="searchUserId-{{user.id}}">{{ user.person.fullname}}</li>
+  {% endfor %}
+</ul>
+
+<script type="text/javascript">
+  $('.searchUserName').click(function() {
+
+      let role = "{{ role }}";
+
+      console.log(role);
+      var url = "{{ path('addUser')}}";
+      var tournamentId = sessionStorage.getItem('tournamentId');
+      var userId = $(this).attr('id').split('-')[1];
+      $('#searchUsersList').html(' ');
+
+      $('#'+role+'List').load(url+'/'+tournamentId+'/'+userId);
+  })
+</script>

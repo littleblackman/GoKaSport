@@ -13,8 +13,9 @@ use AppBundle\Entity\TournamentGroup;
  *
  * @ORM\Table(name="game_match")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MatchRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
-class Match
+class Match extends LbmExtensionEntity
 {
     /**
      * @var int

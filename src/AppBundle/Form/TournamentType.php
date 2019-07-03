@@ -22,17 +22,19 @@ class TournamentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-              ->add('name', TextType::class, ['label' => 'Nom'])
+              ->add('name', TextType::class, ['attr' => ['placeholder' => 'Nom']])
               ->add('description', TextareaType::class, ['required' => false])
               ->add('dateStart', DateType::class, [
                                                     'label' => 'Date du tournoi',
                                                     'format' => 'dd MM yyyy',
+                                                    'years' => range(date('Y'), date('Y')+1),
+                                                    
                                           ])
-              ->add('address', TextType::class, ['label' => 'Adresse'])
-              ->add('city', TextType::class, ['label' => 'Ville'] )
-              ->add('postalCode', TextType::class, ['label' => 'Code Postal'])
+              ->add('address', TextType::class, ['attr' => ['placeholder' => 'Adresse']])
+              ->add('city', TextType::class, ['attr' => ['placeholder' => 'Ville']] )
+              ->add('postalCode', TextType::class, ['attr' => ['placeholder' => 'Code Postal']])
               ->add('isOpen', ChoiceType::class, [
-                                                      'label' => 'ouvert',
+                                                      'label' => 'Ouvert',
                                                       'choices' => ['non' => 0, 'oui' => 1]
                                                     ])
               ->add('isInit', ChoiceType::class, [

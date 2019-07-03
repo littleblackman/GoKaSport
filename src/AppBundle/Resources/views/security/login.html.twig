@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{% if error %}
+  <div class="alert--danger">{{ error.message }}</div>
+{% endif %}
+
+
+<br/><br/>
+<h1 style="text-align: center">
+  Goome<br/>
+  <span>Connexion</span>
+</h1>
+<br/>
+
+<form action="{{ path('login_check') }}" method="post" style="text-align: center">
+  <input style="width: 100%; padding: 20px;" type="text" id="username" placeholder="Entrez votre email" name="_username" value="{{ last_username }}" autocomplete="on"/>
+  <br/><br/>
+  <input style="width: 100%; padding: 20px;" type="password" id="password"  placeholder="Entrez votre mot de passe" name="_password" autocomplete="on"/>
+  <br /><br/>
+  <input style="width: 100%; color: black" class="submitButton" type="submit" value="Connexion" />
+  <br/><br/>
+</form>
+
+<button style="width: 100%; background-color: #f5fec0; color: black" class="submitButton" id="createAccount" href="{{ path('signin')}}">Créer un compte</button>
+
+
+{% endblock %}
+
+{% block javascript %}
+  <script>
+    $('#createAccount').click(function(){
+      let link = $(this).attr('href');
+      $(location).attr('href', link);
+    });
+  </script>
+{% endblock %}

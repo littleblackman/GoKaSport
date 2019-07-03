@@ -1,0 +1,14 @@
+<ol style="columns: 2;">
+  {% for user in users %}
+    <li class="usersListTournament" id="usersListTournament-{{ user.id }}-{{ user.roleString|lower }}">{{ user.person.fullname}}</li>
+  {% endfor %}
+</ol>
+<script>
+$('.usersListTournament').click(function() {
+    var url = "{{ path('deleteUserAjax')}}";
+    var tournamentId = sessionStorage.getItem('tournamentId');
+    var userId = $(this).attr('id').split('-')[1];
+    var target = $(this).attr('id').split('-')[2];
+    $('#'+target+'List').load(url+'/'+tournamentId+'/'+userId);
+})
+</script>

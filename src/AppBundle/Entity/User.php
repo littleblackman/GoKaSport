@@ -1,17 +1,21 @@
 <?php
 
-namespace BackstageBundle\Entity;
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
  * User
  *
  * @ORM\Table(name="lbm_user")
- * @ORM\Entity(repositoryClass="BackstageBundle\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ * @ORM\HasLifecycleCallbacks()
+ * @author Sandy Razafitrimo <sandy@etsik.com>
  */
-class User
+class User extends LbmExtensionEntity implements UserInterface
 {
     /**
      * @var int
@@ -57,6 +61,33 @@ class User
      */
     private $roles;
 
+    /**
+     *
+     * @ORM\ManyToMany(targetEntity="Tournament", mappedBy="users")
+     * @ORM\JoinTable(name="tournaments_users")
+     */
+    private $tournaments;
+
+    /**
+     * @var Person
+     *
+     * @ORM\OneToOne(targetEntity="Person", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="person_id", referencedColumnName="id")
+     */
+    private $person;
+
+    private $rolesUF = [    'ADMIN'     => 'Administrateur',
+                                            'COACH'     => 'Coach',
+                                            'MANAGER'   => 'Organisateur.trice',
+                                            'REFEREE'   => 'Arbitre',
+                                            'PLAYER'    => 'Joueur.se'
+                                ];
+
+
+    public function __construct()
+    {
+        $this->tournaments = new ArrayCollection();
+    }
 
 
     /**
@@ -187,5 +218,49 @@ class User
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    public function getRoleString($separator = ',')
+    {
+          if(count($this->getRoles()) == 1) {
+              $string = str_replace('ROLE_', '', $this->getRoles()[0]);
+          } else {
+              $string = implode($separator, $this->getRoles());
+          }
+          return $string;
+    }
+
+    public function getPerson()
+    {
+        return $this->person;
+    }
+
+
+    public function setPerson(Person $person)
+    {
+        $this->person = $person;
+
+        return $this;
+    }
+
+    public function showRoleUF()
+    {
+        return $this->rolesUF[$this->getRoleString()];
+    }
+
+
+    public function addTournament(Tournament $tournament)
+    {
+        $this->tournaments[] = $tournament;
+        return $this;
+    }
+
+    public function getTournaments()
+    {
+        return $this->tournaments;
+    }
+
+    public function eraseCredentials()
+    {
     }
 }

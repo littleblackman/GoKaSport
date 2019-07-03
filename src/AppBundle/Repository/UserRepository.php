@@ -1,6 +1,6 @@
 <?php
 
-namespace BackstageBundle\Repository;
+namespace AppBundle\Repository;
 
 /**
  * UserRepository
@@ -10,4 +10,38 @@ namespace BackstageBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+
+  public function findByList($role = null)
+  {
+    $qb =  $this
+          ->createQueryBuilder('u')
+          ->leftJoin('u.person', 'p')
+          ->orderBy('p.lastname', 'ASC')
+          ->where('u.isActive = 1');
+    if($role != null) {
+      $qb->andWhere('u.roles like :role')
+      ->setParameter(':role', '%'.$role.'%');
+    }
+    return $qb
+          ->getQuery()
+          ->getResult()
+          ;
+  }
+
+  public function findLike($role, $search) {
+    return $this
+          ->createQueryBuilder('u')
+          ->leftJoin('u.person', 'p')
+          ->orderBy('p.lastname', 'ASC')
+          ->where('u.isActive = 1')
+          ->andWhere('p.firstname like :search OR p.lastname like :search')
+          ->andWhere('u.roles like :role')
+          ->setParameter(':role', '%'.$role.'%')
+          ->setParameter(':search', '%'.$search.'%')
+          ->getQuery()
+          ->getResult()
+          ;
+  }
+
+
 }

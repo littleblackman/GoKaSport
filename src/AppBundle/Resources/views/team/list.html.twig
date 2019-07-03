@@ -15,7 +15,7 @@
         <div class="playersList" style="display: none">
             <ul>
             {% for player in team.players %}
-                <li>{{ player.firstName~' '~player.lastName}}</li>
+                <li>{{ player.person.fullname}}</li>
             {% endfor %}
             </ul>
         </div>

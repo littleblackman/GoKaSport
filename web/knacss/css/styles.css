@@ -5,7 +5,7 @@ header, footer {
   color: black;
 }
 
-header { position: relative; box-shadow: 0px 4px 20px black}
+header { position: relative; box-shadow: 0px 4px 20px black; }
 
 html, main {
   background: #60a9a6;
@@ -15,16 +15,18 @@ aside {
 }
 
 body { background: #fafafa ; font-family: 'Lato', sans-serif;}
-h1, h2, h3, h4, h5 { font-family: 'Lato', sans-serif; }
+h1, h2, h3, h4, h5 { font-family: 'Lato', sans-serif; text-align: center}
 
-h1 { font-weight: 700; font-size: 3em; color: white}
-h2 { font-size: 1.4em}
+h1 { font-weight: 700; font-size: 2.0em; color: white}
+h2 { font-size: 1.8em; font-weight: bold; color: white}
 h3 { font-size: 1.2em}
 
 h1 span { font-weight: 400; font-size: 0.8em}
 
-.button { padding: 20px; background-color: #caf2d7; box-shadow: 0px 4px 4px black; text-align: center;}
-.button { font-size: 1.3em}
+.button, .submitButton { padding: 20px; background-color: #caf2d7; box-shadow: 0px 4px 4px black; text-align: center;}
+.button, .submitButton { font-size: 1.3em}
+
+.submitButton:hover { background-color: #8acea2 }
 
 p { font-size: 1.2em; text-align: justify;}
 
@@ -33,11 +35,18 @@ ul {
   padding: 0;
 }
 
+.backbutton { font-size: 2em; border: 1px solid black; padding: 4px;
+            cursor: pointer; background-color: #caf2d7;margin-right: 4px;
+            width: 35px; height: 35px; text-align: center;}
+
+
+#splashModal { background-color: white; min-height: 800px; width: 100%; position: absolute; display:none }
+#closeSplashModal { font-size: 50px; float: right; cursor: pointer; margin-right: 10px; margin-top: 5px}
+#messageModal { position: absolute }
+
 .fullWidth { width: 100%}
 
 a:link { text-decoration:none}
-
-.italicDetails { font-style: italic; font-size: 0.9em;}
 
 /* navigation */
 #navigation { background: #caf2d7; width: 100%; position: absolute; z-index: 99; left: 0px; padding: 10px;}
@@ -49,8 +58,22 @@ a:link { text-decoration:none}
 #logoEtsik { width: 40px; height: 40px; float: right}
 
 
-/* homepage */
+/* users List - tournament */
+.listElement { margin-top: 20px }
+.listItem {
+          display: flex; justify-content: space-between;
+          font-height: 50px; font-size: 1.2em; padding: 5px;
+          border-bottom: 1px solid lightgrey;
+        }
+.listElement li { height: 40px;}
+#selectRole option { font-size: 2em; font-variant: small-caps;}
+#showCountRole { text-align: center; color: black; font-weight: bold; padding-top: 10px }
 
+/* signin */
+#create-user input { width: 100%; height: 50px}
+#user_person_birthdate { display: flex; justify-content: space-between;}
+#user_person_birthdate select { width: 30%}
+#user_roles { width: 100%; height: 50px;}
 
 
 /* flash message */
@@ -66,7 +89,9 @@ a:link { text-decoration:none}
 #subBody h2 { text-align: center}
 
 /* tournament form */
-#edit-tournament input, #edit-tournament textarea, #edit-tournament select { width: 100%}
+#edit-tournament input, #edit-tournament textarea { width: 100%; height: 50px}
+#tournament_dateStart { display: flex; justify-content: space-between;}
+#tournament_dateStart select { width: 30%}
 
 #tournament_dateStart { display: flex; flex-direction: row;}
 #edit-tournament .group { display: flex; flex-direction: row; justify-content:space-between;}
@@ -76,8 +101,8 @@ a:link { text-decoration:none}
 #edit-team input, #edit-team textarea, #edit-team select { width: 100%}
 
 /* team ajax list */
-#searchTeamsList { width: 100%; background-color: #f47645}
-#searchTeamsList > li { border-bottom: 1px solid grey; padding-top: 4px; padding-bottom: 4px; font-size: 1.2em; cursor: pointer}
+#searchTeamsList { width: 100%; background-color: #f5fec0}
+#searchTeamsList > li { color: black; border-bottom: 1px solid grey; padding-top: 4px; padding-bottom: 4px; font-size: 1.2em; cursor: pointer}
 
 /* create game */
 .liSelected { padding-left: 10px}

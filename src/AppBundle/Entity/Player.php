@@ -11,8 +11,9 @@ use AppBundle\Entity\MatchDetails;
  *
  * @ORM\Table(name="player")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlayerRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
-class Player
+class Player extends LbmExtensionEntity
 {
     /**
      * @var int
@@ -22,20 +23,6 @@ class Player
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="firstName", type="string", length=255)
-     */
-    private $firstName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="lastName", type="string", length=255)
-     */
-    private $lastName;
 
     /**
      * @var string
@@ -64,6 +51,14 @@ class Player
     */
     private $matchDetails;
 
+    /**
+     * @var Person
+     *
+     * @ORM\OneToOne(targetEntity="Person")
+     * @ORM\JoinColumn(name="person_id", referencedColumnName="id")
+     */
+    private $person;
+
 
     /**
      * Get id
@@ -76,41 +71,13 @@ class Player
     }
 
     /**
-     * Set firstName
-     *
-     * @param string $firstName
-     *
-     * @return Player
-     */
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    /**
      * Get firstName
      *
      * @return string
      */
     public function getFirstName()
     {
-        return $this->firstName;
-    }
-
-    /**
-     * Set lastName
-     *
-     * @param string $lastName
-     *
-     * @return Player
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-
-        return $this;
+        return $this->getPerson()->getFirstname();
     }
 
     /**
@@ -120,7 +87,7 @@ class Player
      */
     public function getLastName()
     {
-        return $this->lastName;
+        return $this->getPerson()->getLastname();
     }
 
     /**
@@ -192,5 +159,17 @@ class Player
     public function getTeam()
     {
         return $this->team;
+    }
+
+    public function getPerson()
+    {
+        return $this->person;
+    }
+
+    public function setPerson(Person $person)
+    {
+        $this->person = $person;
+
+        return $this;
     }
 }

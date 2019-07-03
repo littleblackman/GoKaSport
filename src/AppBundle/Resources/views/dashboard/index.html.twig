@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1 style="text-align: center">
+  Welcome
+  <br/>
+  <span>{{ app.user.person.fullname }}</span>
+</h1>
+
+<br/>
+
+<button class="submitButton" style="width: 100%">
+  <a href="{{ path('createTournament')}}" style="width: 100%">
+    Créer un tournoi
+  </a>
+</button>
+
+<br/><br/><br/>
+<button class="submitButton" style="width: 100%; background-color: #f5fec0">
+  <a href="{{ path('listTournament')}}" style="width: 100%">
+    Voir Vos tournois
+  </a>
+</button>
+
+
+
+{% endblock %}

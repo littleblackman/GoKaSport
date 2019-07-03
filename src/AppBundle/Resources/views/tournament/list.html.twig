@@ -1,22 +1,36 @@
-{% extends 'AppBundle:tournament:_template.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block bodyTournament %}
+{% block body %}
 
-    {% for tournament in tournaments %}
-        <h3>
-            {{tournament.name}}
-            <a href="{{ path('delTournament', {id: tournament.id})}}" style="float: right; font-weight: normal;">
-                <i class="far fa-trash-alt"></i>
-            </a>
-            <a href="{{ path('editTournament', {id: tournament.id})}}" style="float: right; font-weight: normal; margin-right: 20px">
-                <i class="fas fa-edit"></i>
-            </a>
-            <a href="{{ path('showTournament', {id: tournament.id})}}" style="float: right; font-weight: normal; margin-right: 20px">
-                <i class="far fa-eye"></i>
-            </a>
-
-        </h3>
-        <div class="italicDetails">{{tournament.city~' - '~tournament.dateStart|date('d/m/Y')  }}</div>
-        <hr/>
+  <h1>Liste des tournois</h1>
+  <hr/>
+  <h3 style="font-weight: bold">Ouverts</h3>
+  <ul class="listElement">
+    {% for tournament in opens %}
+      <li class="listItem">
+        <div>{{tournament.name}}</div>
+        <div style="font-size: 0.9em; font-style: italic">{{tournament.dateStart|date('d/m/Y') ~ ' '~tournament.city}}</div>
+      </li>
     {% endfor %}
+  </ul>
+  <br/><br/>
+  <h3 style="font-weight: bold">Mes tournois</h3>
+  <ul class="listElement">
+    {% for tournament in owners %}
+      <li class="listItem">
+      <div><a href="{{ path('showTournament', {'id' : tournament.id })}}">{{tournament.name}}</a></div>
+        <div style="font-size: 0.9em; font-style: italic">{{tournament.dateStart|date('d/m/Y') ~ ' '~tournament.city}}</div>
+      </li>
+    {% endfor %}
+  </ul>
+  <br/><br/>
+  <h3 style="font-weight: bold">Tournois associés</h3>
+  <ul class="listElement">
+    {% for tournament in associates %}
+      <li class="listItem">
+        <div><a href="{{ path('showTournament', {'id' : tournament.id })}}">{{tournament.name}}</a></div>
+        <div style="font-size: 0.9em; font-style: italic">{{tournament.dateStart|date('d/m/Y') ~ ' '~tournament.city}}</div>
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}

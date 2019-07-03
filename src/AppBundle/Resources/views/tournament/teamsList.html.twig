@@ -1,5 +1,15 @@
 <ol style="columns: 2;">
   {% for team in teams %}
-    <li>{{ team.name}}</li>
+    <li class="teamsListTournament" id="teamsListTournament-{{ team.id }}">{{ team.name}}</li>
   {% endfor %}
 </ol>
+
+<script>
+$('.teamsListTournament').click(function() {
+    var url = "{{ path('deleteTeamAjax')}}";
+    var tournamentId = sessionStorage.getItem('tournamentId');
+    var teamId = $(this).attr('id').split('-')[1];
+    $('#teamList').load(url+'/'+tournamentId+'/'+teamId);
+})
+
+</script>

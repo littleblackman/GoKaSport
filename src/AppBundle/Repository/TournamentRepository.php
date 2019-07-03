@@ -10,4 +10,41 @@ namespace AppBundle\Repository;
  */
 class TournamentRepository extends \Doctrine\ORM\EntityRepository
 {
+
+  public function findIsOpen()
+  {
+    return $this
+          ->createQueryBuilder('t')
+          ->where('t.isOpen = 1')
+          ->orderBy('t.dateStart', 'ASC')
+          ->getQuery()
+          ->getResult();
+
+  }
+
+  public function findByCreatedBy($user)
+  {
+    return $this
+          ->createQueryBuilder('t')
+          ->where('t.createdBy = :user')
+          ->setParameter(':user', $user)
+          ->orderBy('t.dateStart', 'ASC')
+          ->getQuery()
+          ->getResult();
+
+  }
+
+
+  public function findAssociated($user_id)
+  {
+    return $this
+          ->createQueryBuilder('t')
+          ->innerJoin('t.users', 'u')
+          ->where('u.id = :user_id')
+          ->setParameter(':user_id', $user_id)
+          ->orderBy('t.dateStart', 'ASC')
+          ->getQuery()
+          ->getResult();
+
+  }
 }

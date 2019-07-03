@@ -1,26 +1,55 @@
 <span id="navigationControl">
   <i class="fas fa-align-left"></i>
 </span>
+
 <img src="{{ asset('etsik/Logo_ETSIK_noir-solo.png')}}" id="logoEtsik" alt="Logo ETSIK - Numérique" />
+
+{% if app.user.username is defined %}
+  <span style="line-height: 1.3em; float: right; margin-right: 30px; text-align: right">
+    {{ app.user.username }}<br/>
+    {{ app.user.email }}<br/>
+  </span>
+{% endif %}
 
 <nav id="navigation" role="navigation">
   <ul>
-      <li>
-        <i class="fas fa-home"></i>
-        <a href="{{ path('homepage')}}">Home</a>
-      </li>
+      {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <li>
+          <i class="fas fa-home"></i>
+          <a href="{{ path('dashboard')}}">Dashboard</a>
+        </li>
+      {% else %}
+        <li>
+          <i class="fas fa-home"></i>
+          <a href="{{ path('homepage')}}">Home</a>
+        </li>
+      {% endif %}
       <li>
         <i class="fas fa-trophy"></i>
         <a href="{{ path('listTournament')}}">Tournois</a>
       </li>
+      {% if is_granted('ROLE_MANAGER', 'ROLE_ADMIN') %}
+        <li>
+          <i class="fas fa-chess"></i>
+          <a href="{{ path('listTeam')}}">Equipes</a>
+        </li>
+      {% endif %}
+      {% if is_granted('ROLE_ADMIN') %}
+        <li>
+          <i class="fas fa-users"></i>
+          <a href="{{ path('usersList')}}">Utilisateurs</a>
+        </li>
+      {% endif %}
       <li>
-        <i class="fas fa-chess"></i>
-        <a href="{{ path('listTeam')}}">Equipes</a>
+        {% if app.user.username is defined %}
+          <i class="fas fa-shoe-prints"></i>
+          <a href="{{ path('logout')}}">Déconnexion</a>
+        {% else %}
+          <i class="fas fa-laptop-code"></i>
+          <a href="{{ path('login')}}">Connexion</a>
+        {% endif %}
       </li>
-      <li>
-        <i class="fas fa-laptop-code"></i>
-        <a href="#">Connexion</a>
-      </li>
+
   </ul>
 </nav>
 

@@ -19,8 +19,9 @@ use AppBundle\Entity\Team;
  *
  * @ORM\Table(name="tournament")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TournamentRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
-class Tournament
+class Tournament extends LbmExtensionEntity
 {
     /**
      * @var int
@@ -45,7 +46,7 @@ class Tournament
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
@@ -136,6 +137,14 @@ class Tournament
     * @ORM\JoinColumn(name="game_options_id", referencedColumnName="id")
     */
     private $gameOptions;
+
+    /**
+     *
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="tournaments")
+     * @ORM\JoinTable(name="tournaments_users")
+     */
+    private $users;
+
 
     public function __construct()
     {
@@ -421,6 +430,41 @@ class Tournament
     public function getTeams()
     {
         return $this->teams;
+    }
+
+    public function addUser($user)
+    {
+        $this->users[] = $user;
+        $user->addTournament($this);
+        return $this;
+    }
+
+    public function removeUser($user)
+    {
+        $this->users->removeElement($user);
+        return $this;
+    }
+
+    public function getUsers($role = null)
+    {
+        if($role) {
+            $result = [];
+            foreach($this->users as $user) {
+                if($user->getRoleString() == $role) $result[] = $user;
+            }
+            return $result;
+        }
+        return $this->users;
+    }
+
+    public function getManagers()
+    {
+        return $this->getUsers('MANAGER');
+    }
+
+    public function getReferees()
+    {
+        return $this->getUsers('REFEREE');
     }
 
     public function addGroup(TournamentGroup $group)

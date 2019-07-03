@@ -2,45 +2,31 @@
 # https://symfony.com/doc/current/security.html
 security:
 
-    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         in_memory:
             memory: ~
         main:
             entity:
-                class: BackstageBundle\Entity\User
-                property: username
+                class: AppBundle\Entity\User
+                property: email
 
     encoders:
         Symfony\Component\Security\Core\User\User: bcrypt
-        BackstageBundle\Entity\User: bcrypt
-
-    access_control:
-        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: ROLE_ADMIN }
-
-    role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        AppBundle\Entity\User: bcrypt
 
     firewalls:
-        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
         main:
-            anonymous: ~
+            pattern: ^/
+            anonymous: true
+            provider: main
             form_login:
                 login_path: login
-                check_path: login
+                check_path: login_check
+                default_target_path: dashboard
             logout:
-                path:   /logout
-                target: /
-            # activate different ways to authenticate
-
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-            #http_basic: ~
-
-            # https://symfony.com/doc/current/security/form_login_setup.html
-            #form_login: ~
+                path:   logout
+                target: homepage

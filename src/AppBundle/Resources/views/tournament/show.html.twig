@@ -1,38 +1,111 @@
-{% extends 'AppBundle:tournament:_template.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block bodyTournament %}
-    <h2>{{tournament.name}}</h2>
+{% block backButton %}
+    <i class="fas fa-angle-left backbutton" onclick="history.back()"></i>
+{% endblock %}
 
-    <h3>Détails</h3>
-    <div class="details"></div>
-    <hr/>
-    <h3>Liste des Equipes</h3>
-    <hr/>
+{% block body %}
+     <h1 id="nameTournament-details" class="listButton" style="cursor: pointer">{{tournament.name}}</h1>
+    <div style="text-align: center">
+        Créé par <b>{{ tournament.getCreatedBy.person.fullname}}</b>
+    </div>
+
+    <ul id="detailsList" style="display: none">
+        <li class="listItem">
+            <div>{{tournament.city}}</div>
+             <div>{{tournament.dateStart|date('d/m/Y')  }}</div>
+        </li>
+        <li style="text-align: justify">
+            {{ tournament.description}}
+        </li>
+    </ul>
+
+    <hr style="clear: both"/>
+    <h3 style="font-weight: bold" class="listButton" id="listButton-team">Liste des Equipes</h3>
     <div id="teamList">
       {% include 'AppBundle:tournament:teamsList.html.twig' with {'teams': tournament.teams} %}
     </div>
-    <br/>
-    <input type="text" name="team" placeholder="ajouter une équipe" class="fullWidth" id="addTeam"/>
-
-    <div id="searchResult">
+    <div style="display: flex">
+        <i class="fas fa-plus-square" id="button-addTeam" style="font-size: 2.3em; margin-right: 10px;"></i>
+        <input type="text" name="team" placeholder="ajouter une équipe" class="fullWidth" id="addTeam" style="display: none"/>
     </div>
+    <div id="searchResult-addTeam"></div>
 
-    <br/><br/>
-    <a href="{{ path('createGame', {'tournamentId' : tournament.id })}}" class="btn--primary fullWidth">
-      Initier la compétition
+    <hr style="clear: both"/>
+    <h3 style="font-weight: bold" class="listButton" id="listButton-manager">Liste des Organisateur.trice.s</h3>
+    <div id="managerList">
+      {% include 'AppBundle:tournament:usersList.html.twig' with {'users': tournament.managers} %}
+    </div>
+    <div style="display: flex">
+        <i class="fas fa-plus-square" id="button-addManager" style="font-size: 2.3em; margin-right: 10px;"></i>
+        <input type="text" name="manager" placeholder="ajouter un.e manager" class="fullWidth" id="addManager" style="display: none"/>
+    </div>
+    <div id="searchResult-addManager"></div>
+
+    <hr style="clear: both"/>
+    <h3 style="font-weight: bold" class="listButton" id="listButton-referee">Liste des Arbitres</h3>
+    <div id="refereeList">
+      {% include 'AppBundle:tournament:usersList.html.twig' with {'users': tournament.referees} %}
+    </div>
+    <div style="display: flex">
+        <i class="fas fa-plus-square" id="button-addReferee" style="font-size: 2.3em; margin-right: 10px;"></i>
+        <input type="text" name="referee" placeholder="ajouter un.e arbitre" class="fullWidth" id="addReferee" style="display: none"/>
+    </div>
+    <div id="searchResult-addReferee"></div>
+
+    <hr/>
+    <a href="{{ path('createGame', {'tournamentId' : tournament.id })}}" class="btn fullWidth">
+      Initier le tournoi
     </a>
+    {% if tournament.getCreatedBy == app.user and tournament.isOpen != 1 %}
+        <br/><br/>
+        <a href="{{ path('delTournament', {'id' : tournament.id })}}" class="btn--danger fullWidth">
+          Supprimer le tournoi
+        </a>
+    {% endif %}
 
     <script type="text/javascript">
 
         sessionStorage.removeItem('tournamentId');
         sessionStorage.setItem('tournamentId', "{{tournament.id}}");
+
+        // ajax request team
         var url = "{{ path('teamsListAjax')}}";
         $('#addTeam').keyup(function() {
             var search = $('#addTeam').val();
-            if(search.length > 1) {
-                $('#searchResult').load(url+'/'+search);
+            if(search.length > 0) {
+                $('#searchResult-addTeam').load(url+'/'+search);
             }
         })
+
+        // ajax request team
+        var url2 = "{{ path('usersListAjax', {'role': 'ROLE_MANAGER'})}}";
+        $('#addManager').keyup(function() {
+            var search = $('#addManager').val();
+            if(search.length > 0) {
+                $('#searchResult-addManager').load(url2+'/'+search);
+            }
+        })
+        var url3 = "{{ path('usersListAjax', {'role': 'ROLE_REFEREE'})}}";
+        $('#addReferee').keyup(function() {
+            var search = $('#addReferee').val();
+            if(search.length > 0) {
+                $('#searchResult-addReferee').load(url3+'/'+search);
+            }
+        })
+
+        // toggle list function
+        $('.listButton').click(function() {
+            let target = $(this).attr('id').split('-')[1];
+            $('#'+target+'List').toggle();
+        })
+
+        $('.fa-plus-square').click(function() {
+            let target = $(this).attr('id').split('-')[1];
+            $('#'+target).toggle();
+        })
+
+
     </script>
 
 {% endblock %}

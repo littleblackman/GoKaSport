@@ -12,8 +12,9 @@ use AppBundle\Entity\Tournament;
  *
  * @ORM\Table(name="team")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TeamRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
-class Team
+class Team extends LbmExtensionEntity
 {
     /**
      * @var int

@@ -1,0 +1,16 @@
+
+<div id="showUserContent" style="margin:20px; font-size: 1.8em">
+<div id="userPhoto">
+  {% if user.person.photo is not null %}
+    <img src="{{ asset(user.person.photo)}}"/>
+  {% else %}
+    <img src="{{ asset('images/person/anonymous.jpg')}}" style="border-radius: 180px; height: 200px; width: 200px"/>
+  {% endif %}
+</div>
+<br/>
+<h2>{{ user.person.fullname }}</h2>
+<hr/>
+<div style="display: flex; justify-content: space-between">
+  <div id="userRole">{{ user.showRoleUF }}</div>
+  <div id="userBirthdate">{{ user.person.age}} ans</div>
+</div>

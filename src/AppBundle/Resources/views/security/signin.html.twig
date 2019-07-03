@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h1 style="text-align: center">
+  Goome<br/>
+  <span>Création de compte</span>
+</h1>
+
+
+{{ form_start(form,  {'attr': {'id': 'create-user'}}) }}
+  <div class="flex-container--column">
+      <div>
+        {{ form_widget(form.person.firstname)}}
+        {{ form_errors(form.person.firstname)}}
+      </div>
+      <br/>
+      <div>
+        {{ form_widget(form.person.lastname)}}
+        {{ form_errors(form.person.lastname)}}
+      </div>
+      <br/>
+      <div>
+        {{ form_widget(form.roles)}}
+        {{ form_errors(form.roles)}}
+      </div>
+
+      <br/>
+      <div>
+        <h2 style="text-align: center">{{ form_label(form.person.birthdate)}}</h2>
+        {{ form_widget(form.person.birthdate)}}
+        {{ form_errors(form.person.birthdate)}}
+      </div>
+      <br/>
+      <div>
+        {{ form_widget(form.email)}}
+        {{ form_errors(form.email)}}
+      </div>
+      <br/>
+      <div>
+        {{ form_widget(form.username)}}
+        {{ form_errors(form.username)}}
+      </div>
+      <br/>
+      <div>
+        {{ form_widget(form.password)}}
+        {{ form_errors(form.password)}}
+      </div>
+      <br/>
+      <input style="width: 100%; color: black; line-height: 4px" class="submitButton" type="submit" value="Créer le compte" />
+  </div>
+{{ form_end(form)}}
+
+{% endblock %}
+
+{% block javascript %}
+  <script>
+
+  </script>
+{% endblock %}

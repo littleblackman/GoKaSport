@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h2>
+  Utilisateurs Goome
+</h2>
+
+<div>
+  <select name="role" id="selectRole" style="width: 100%; padding: 10px">
+    <option value=""></value>
+    <option value="ROLE_PLAYER" {{ selectOption('ROLE_PLAYER', role) }}>Joueur.se.s</value>
+    <option value="ROLE_COACH" {{ selectOption('ROLE_COACH', role) }}>Coachs</value>
+    <option value="ROLE_REFEREE" {{ selectOption('ROLE_REFEREE', role) }}>Arbitres</value>
+    <option value="ROLE_MANAGER" {{ selectOption('ROLE_MANAGER', role) }}>Organisateur.trice.s</value>
+  </select>
+</div>
+
+<div id="showCountRole">
+</div>
+
+<ul class="listElement">
+  {% for user in users %}
+    {% if user.roleString != "ADMIN" %}
+      <li id="user-{{ user.id}}" class="listItem">
+        <div>
+          {{ user.showRoleUF|upper }}
+        </div>
+        <div>
+          {{ user.person.fullnameR }}
+        </div>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+
+{% endblock %}
+
+{% block javascript %}
+  <script>
+
+    let nbItems = $('.listItem').length;
+    $('#showCountRole').html(nbItems+' RESULTATS');
+
+    let urlList     = "{{ path('usersList')}}";
+    let urlShowUser = "{{ path('showUser')}}";
+
+    // change role list
+    $('#selectRole').change(function() {
+        let role = $(this).val();
+        $(location).attr('href', urlList+'/'+role);
+    })
+    $('.listItem').click(function() {
+        let user_id = $(this).attr('id').split('-')[1];
+        $('#splashModal').show();
+        $('#splashModal')
+        $('#splashModalContent').load(urlShowUser+'/'+user_id);
+    })
+  </script>
+{% endblock %}

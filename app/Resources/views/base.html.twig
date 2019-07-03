@@ -44,14 +44,40 @@
   <body>
 
     <header id="header" role="banner" class="pam">
+      {% block backButton %}
+      {% endblock %}
       {% include('navigation.html.twig')%}
     </header>
+
+    <div id="splashModal">
+      <i class="fas fa-times" id="closeSplashModal"></i>
+      <div id="splashModalContent">
+      </div>
+    </div>
+
+    {% if app.flashes is defined %}
+      {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="messageModal alert--{{ type }}" style="margin-top: 10px; text-align: center; font-weight: bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+      {% endfor %}
+    {% endif %}
+
     <main id="main" role="main" class="pam">
       {% block body %}{% endblock %}
     </main>
 
 
     <script>
+
+      $('#closeSplashModal').click(function() {
+        $('#splashModal').hide();
+        $('#splashModalContent').empty();
+      })
+    /*
+
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').then(function(reg) {
           // registration worked
@@ -61,8 +87,11 @@
           console.log('Registration failed with ' + error);
         });
       };
+
+      */
     </script>
 
+  {% block javascript %}{% endblock %}
 
   </body>
 </html>
