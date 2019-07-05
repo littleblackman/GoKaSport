@@ -43,20 +43,6 @@
         </div>
 
         <br/>
-        <div class="group">
-            <div>
-              {{ form_label(form.isOpen)}}
-              {{ form_widget(form.isOpen)}}
-            </div>
-            <div>
-              {{ form_label(form.isInit)}}
-              {{ form_widget(form.isInit)}}
-            </div>
-            <div>
-              {{ form_label(form.isValided)}}
-              {{ form_widget(form.isValided)}}
-            </div>
-        </div>
 
         <div>
           <br/>
@@ -65,22 +51,6 @@
 
     {{ form_end(form)}}
 
-    {% if tournamentId != 0 %}
-      <br/><br/>
-      <div>
-          <a href="{{ path('resetTournament', {'tournamentId' : tournamentId, 'type' : 'matchs'})}}" class="submitButton btn fullWidth">
-            RESET MATCHS
-          </a>
-          <br/><br/>
-          <a href="{{ path('resetTournament', {'tournamentId' : tournamentId, 'type' : 'groups'})}}" class="submitButton btn fullWidth">
-            RESET GROUPS
-          </a>
-          <br/><br/>
-          <a href="{{ path('resetTournament', {'tournamentId' : tournamentId, 'type' : 'teams'})}}" class=" submitButton btn fullWidth">
-            RESET TEAMS
-          </a>
-      </div>
-    {% endif %}
-
+  
 
 {% endblock %}

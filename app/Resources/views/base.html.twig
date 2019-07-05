@@ -44,8 +44,7 @@
   <body>
 
     <header id="header" role="banner" class="pam">
-      {% block backButton %}
-      {% endblock %}
+      <i class="fas fa-angle-left backbutton" onclick="history.back()"></i>
       {% include('navigation.html.twig')%}
     </header>
 
@@ -59,7 +58,7 @@
       {% for type, messages in app.flashes %}
             {% for message in messages %}
                 <div class="messageModal alert--{{ type }}" style="margin-top: 10px; text-align: center; font-weight: bold">
-                    {{ message }}
+                    {{ message|raw }}
                 </div>
             {% endfor %}
       {% endfor %}
@@ -76,6 +75,7 @@
         $('#splashModal').hide();
         $('#splashModalContent').empty();
       })
+
     /*
 
       if ('serviceWorker' in navigator) {

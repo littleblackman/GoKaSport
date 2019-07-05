@@ -26,6 +26,12 @@ h1 span { font-weight: 400; font-size: 0.8em}
 .button, .submitButton { padding: 20px; background-color: #caf2d7; box-shadow: 0px 4px 4px black; text-align: center;}
 .button, .submitButton { font-size: 1.3em}
 
+.btn, .btn--success, .btn--info, .btn--alert, .btn--warning, .btn--danger, .btn--primary { height: 50px; font-size: 1.3em; box-shadow: 0px 4px 4px black; text-align: center; padding: 20px }
+.btn--success { background-color: #caf2d7; color: black }
+.btn--info { background-color: #f5fec0}
+.btn--alert, .btn--warning, .btn--danger { background-color: #fddede}
+.btn--danger { color: black }
+
 .submitButton:hover { background-color: #8acea2 }
 
 p { font-size: 1.2em; text-align: justify;}
@@ -69,6 +75,12 @@ a:link { text-decoration:none}
 #selectRole option { font-size: 2em; font-variant: small-caps;}
 #showCountRole { text-align: center; color: black; font-weight: bold; padding-top: 10px }
 
+.isOpenTournament {     height: 60px!important;
+    background-color: #caf2d7;
+    margin: 20px 0;
+    padding: 10px;
+    font-size: 1em;}
+
 /* signin */
 #create-user input { width: 100%; height: 50px}
 #user_person_birthdate { display: flex; justify-content: space-between;}
@@ -108,23 +120,27 @@ a:link { text-decoration:none}
 .liSelected { padding-left: 10px}
 .liSelected:hover { cursor: pointer; background-color: #d1f4fa}
 
-/* manage game */
-#groupList div { border: 1px solid black}
-#groupList .groupName { background-color: #f47645; padding: 10px; cursor: pointer}
-#groupList .groupName:hover { background-color: #d1f4fa }
-#groupList .teamsGroup ul > li { padding-left: 10px }
+/* show match group */
+.blockTab { background-color: white; margin: 10px; text-align: center; border: none; height: 50px;font-size: 1.6em; box-shadow: 0px 4px 4px black; text-align: center;}
+.blockTab.is-active { background-color: #f5fec0 !important; border: none}
 
 .allTeams > li { border-top: 1px solid grey; padding: 4px 0px 4px 0px; cursor: pointer;}
 
-.winner { font-weight: 400; color: #0275D8}
+.winner { font-weight: 400; color: #de356a}
 
 /* show match */
-.blueTitle {color: #0275D8}
+.blueTitle {color: black; font-weight: bold;}
 .matchH1 { float: none; display: block; text-align: center }
 .teamMatch { padding: 10px; border: 3px solid #F0AD4E; margin-top: 10px}
 .teamMatch h2 { float: left; }
-.teamMatch .score { float: right; }
+.teamMatch .score { float: right;}
+#boardMatch #score { border: 2px solid orange; padding: 15px; border-radius: 10px; font-size: 1.3em}
 #boardMatch { font-size: 20px;}
+.plusButton, .minusButton { font-size: 60px; cursor: pointer }
+.plusButton { color:#caf2d7;}
+.minusButton { color: #fddede; float: right}
+#iconTime { width: 40%; color: blue; font-size: 14px; font-style: italic}
+#timeStart {}
 
 /* ranking */
 .rankingValue { width: 25px }

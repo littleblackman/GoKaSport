@@ -1,46 +1,93 @@
-{% extends 'AppBundle:game:_template.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block bodyTeam %}
-  Welcome !
-  <br/>
-  Vous pouvez maintenant créer votre compétition.<br/>
-  <br/>
-  Vous avez {{ tournament.countNbTeams }} équipes participantes.<br/>
-  <br/>
-  Voici les différentes options:<br/>
-  <br/>
-  <form  action="{{ path('initGame')}}" method="post">
-      <input type="hidden" name="tournamentId" value="{{ tournament.id}}"/>
-      <ol>
-        {% for option in gameManager.gameOptions %}
-            <li class="liSelected">
-                <ul>
-                    <li>
-                        <input type="checkbox" name="gameOptionsId" value="{{ option.id}}" class="checkbox"/>
-                        &nbsp;&nbsp;&nbsp;
-                        <b>{{ option.nbTeamsRoundFinal }} équipes en phase finale</b>
-                    </li>
-                    {% if (option.nbGroupsFirstRound != 0) %}
-                      <li>+ {{ option.nbGroupsFirstRound }} groupes en phase de sélection</li>
-                      <li>+ {{ option.nbTeamsSelectedByGroups }} équipes restantes par groupe</li>
-                    {% endif %}
-                </ul>
-                <hr/>
-            </li>
-        {% endfor %}
-      </ol>
-      Sélectionnez votre choix et cliquez sur valider.<br/><br/>
-      <input type="checkbox" name="resetForce" value="1" class="checkbox"/>
-      &nbsp;&nbsp;&nbsp;
-      Forcer la création
-      <br/><br/>
-      <input type="submit" class="btn--primary fullWidth" value="Valider"/>
-  </form>
-
-  {% if tournament.isInit == 1 %}
+{% block body %}
+  <p style="font-size: 1.2em">
+    Welcome !
     <br/>
-    <a href="{{ path('manageGame', {'tournamentId' : tournament.id })}}" class="btn--success fullWidth">
-      Gérer la compétition
-    </a>
-  {% endif %}
+    Vous avez {{ tournament.countNbTeams }} équipes participantes.<br/>
+    <br/>
+    Vous pouvez maintenant créer votre tournoi.<br/>
+    <br/>
+  </p>
+  <br/>
+  <form  action="{{ path('initGame')}}" method="post" >
+
+      <input type="hidden" value="{{tournament.id}}" name="tournamentId"/>
+
+      <h2 style="text-align: center">Type de tournoi</h2>
+      <select name = "data[type]" class="fullWidth typeSelect" style="height: 40px" required>
+        <option selected/>
+        <option value="group">Phase de groupes</option>
+        <option value="finalRound">Phase finale</option>
+      </select>
+
+      <br/><br/>
+
+      <p id="groupOptions"  class="typeSelectOptions" style="font-size: 1.2em; display: none">
+        Nombre de groupes&nbsp;&nbsp;&nbsp;
+        <select name="data[nbGroups]">
+          {% for i in 1 .. maxGroup %}
+            <option value="{{i}}" selected>
+              {{ i }}
+            </option>
+          {% endfor %}
+        </select>
+      </p>
+
+      <p id="finalRoundOptions" class="typeSelectOptions" style="font-size: 1.2em; display: none">
+        Nombre d'équipe qualifiés&nbsp;&nbsp;&nbsp;
+        <select name="data[nbFinalRound]">
+          {% for val in maxTeamFinalRoundOption %}
+            <option value="{{val}}" >
+              {{ val }}
+            </option>
+          {% endfor %}
+        </select>
+      </p>
+      <br/><br/>
+
+      {% if tournament.isInit == 1 %}
+        <input type='hidden' name="resetForce" value="0"/>
+
+        <p class="alert--danger" style="text-align: justify;">
+        Les options du tournoi, ainsi que la répartition des équipes ont déjà été faites pour ce tournoi.<br/>
+        Pour le refaire, vous devez forcer en cochant la case suivante : <input type="checkbox" name="resetForce"/>
+        </p>
+        <br/>
+      {% endif %}
+
+
+      <br/>
+      <input style="height: 80px; font-size: 2em" type="submit" class="btn--primary fullWidth" value="Valider"/>
+
+  </form>
+<br/><br/>
+
+  <p class="alert--danger" style="font-size: 2em; text-align: center">
+  ATTENTION
+  </p>
+  <br/>
+  <p class="alert">
+  En cliquant sur valider, les équipes vont être aléatoirement réparties dans le tournoi.<br/>
+  </p>
+  <br/>
+
+  <p class="alert">
+    Une fois la validation effectuée, vous ne pourrez plus ajouter d'équipes.
+  </p>
+  <br/>
+  <p class="alert">
+    Si vous optez pour un tournoi avec des phases de groupes, vous pourrez passer en phase finale, une fois tous les matchs joués.
+  </p>
+  <br/>
+
+  <script>
+    $('.typeSelect').change(function() {
+      $('.typeSelectOptions').hide();
+      let target = $(this).val();
+      $('#'+target+'Options').show();
+    });
+  </script>
+
+
 {% endblock %}

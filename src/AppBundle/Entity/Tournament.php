@@ -107,6 +107,13 @@ class Tournament extends LbmExtensionEntity
     private $isValided;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="competition_type", type="text", nullable=true)
+     */
+    private $competitionType;
+
+    /**
      *
      * @ORM\ManyToMany(targetEntity="Team", inversedBy="tournaments")
      * @ORM\JoinTable(name="tournaments_teams")
@@ -341,6 +348,30 @@ class Tournament extends LbmExtensionEntity
     }
 
     /**
+     * Set competition type
+     *
+     * @param string $type
+     *
+     * @return Tournament
+     */
+    public function setCompetitionType($type)
+    {
+        $this->competitionType = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get competitionType
+     *
+     * @return string
+     */
+    public function getCompetitionType()
+    {
+        return $this->competitionType;
+    }
+
+    /**
      * Set isOpen
      *
      * @param boolean $isOpen
@@ -362,6 +393,13 @@ class Tournament extends LbmExtensionEntity
     public function getIsOpen()
     {
         return $this->isOpen;
+    }
+
+
+    public function getIsOpenclass()
+    {
+        if($this->getIsOpen() == 0) return null;
+        return "btn--info";
     }
 
     /**

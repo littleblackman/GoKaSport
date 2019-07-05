@@ -31,28 +31,28 @@ class GameOptions
     /**
      * @var int
      *
-     * @ORM\Column(name="nb_teams_round_final", type="integer")
+     * @ORM\Column(name="nb_teams_round_final", type="integer", nullable=true)
      */
     private $nbTeamsRoundFinal;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="nb_step_round_final", type="integer")
+     * @ORM\Column(name="nb_step_round_final", type="integer", nullable=true)
      */
     private $nbStepRoundFinal;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="nb_groups_first_round", type="integer")
+     * @ORM\Column(name="nb_groups_first_round", type="integer", nullable=true)
      */
     private $nbGroupsFirstRound;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="nb_teams_selected_by_groups", type="integer")
+     * @ORM\Column(name="nb_teams_selected_by_groups", type="integer", nullable=true)
      */
     private $nbTeamsSelectedByGroups;
 

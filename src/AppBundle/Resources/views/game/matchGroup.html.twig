@@ -1,12 +1,29 @@
-{% extends 'AppBundle:game:_template.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block bodyTeam %}
+{% block body %}
+
+<h1>
+  {% if tournament.isOpen == 1%}
+      <i class="fas fa-running"></i>
+  {% endif %}
+  {{ tournament.name }}
+</h1>
 
 <div class="tabs js-tabs">
   <nav class="tabs-menu">
-    <a href="#tab1" class="tabs-menu-link is-active">Matchs</a>
-    <a href="#tab2" class="tabs-menu-link">Classement</a>
+    <a href="#tab1" class="tabs-menu-link blockTab is-active">Voir les Matchs</a>
+    <a href="#tab2" class="tabs-menu-link blockTab">Voir le Classement</a>
+    <a href="#tab3" class="tabs-menu-link blockTab">Voir les Groupes</a>
   </nav>
+
+  {% if tournament.isOpen != 1 %}
+    <a href="{{ path('openTournament', {'tournamentId' : tournament.id})}}">
+      <div class="alert--warning" style="text-align: center">
+        Le tournoi n'est pas "ouvert",<br/>
+        pour démarrer la compétition cliquez ici.
+      </div>
+    </a>
+  {% endif %}
 
   <div id="tab1" class="tabs-content-item groupList">
 
@@ -20,16 +37,16 @@
                   <li>
                     {{match.teamName('teamA')|raw}} -  {{match.teamName('teamB')|raw}}
 
-
-                    <span style="float: right; margin-left: 50px;">
-                        <a href="{{ path('showMatch', {id: match.id})}}">
-                            <i class="far fa-eye"></i>
-                        </a>
-                    </span>
-
-                    <span style="float: right">
-                        {{ match.score }}
-                    </span>
+                    {% if tournament.isOpen == 1 %}
+                      <span style="float: right; margin-left: 50px;">
+                          <a href="{{ path('showMatch', {id: match.id})}}">
+                              <i class="far fa-eye"></i>
+                          </a>
+                      </span>
+                      <span style="float: right">
+                          {{ match.score }}
+                      </span>
+                    {% endif %}
 
                   </li>
                 {% endfor %}
@@ -39,9 +56,25 @@
       {% endfor %}
   </div>
   <div id="tab2" class="tabs-content-item" style="display: none">
-
       {{ include('AppBundle:game:classement.html.twig', { "tournament" : tournament} ) }}
+  </div>
 
+  <div id="tab3" class="tabs-content-item" style="display: none">
+      {% for group in tournament.groups %}
+          <div class="groupName">
+              <h3>{{ group.name}}</h3>
+          </div>
+          <div class="teamsGroup">
+              <ul>
+                {% for team in group.teams %}
+                  <li>
+                    {{team.name}}
+                  </li>
+                {% endfor %}
+              </ul>
+          </div>
+
+      {% endfor %}
   </div>
 
   <script type="text/javascript">

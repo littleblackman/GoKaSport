@@ -1,20 +1,40 @@
-{% extends 'AppBundle:match:_template.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block bodyMatch %}
+{% block body %}
 
-    <button class="btn--primary fullWidth" id="startButton" style="cursor: pointer">Démarrer le match</button>
+<h1 class="matchH1">
+    <span class="blueTitle">{{ match.teamA.name }}</span><br/>
+    &nbsp;vs&nbsp;<br/>
+    <span class="blueTitle">{{ match.teamB.name }}</span>
+</h1>
+
+
+    {% if match.referees is empty %}
+            {{ dump(match.tournament.referees)}}
+            il y a pas
+    {% else  %}
+            <h2>Arbitre.s</h2>
+            <ul>
+                {% for referee in match.referees %}
+                    <li>{{ referee.person.fullname }}</li>
+                {% endfor %}
+            </ul>
+    {% endif %}
+    <button class="btn--primary fullWidth" id="startButton" style="cursor: pointer">
+        Démarrer le match
+    </button>
 
     <div id="boardMatch" class="clearfix" style="display:none">
         <div id="time" style="width: 20%" class="fl">
           <span id="minuteStart">_</span>:<span id="secondeStart">_</span>
         </div>
-        <div id="score" style="width: 20%; text-align: right" class="fr">
+        <div id="score" class="fr">
           <span id="pointA">0</span>
             :
           <span id="pointB">0</span>
         </div>
-        <div id="iconTime" class="center" style="width: 40%; color: #5CB85C; font-size: 14px; font-style: italic">
-            <span id="timeStart">
+        <div id="iconTime" class="center">
+            <span id="timeStart" style="font-size: 1.2em">
               {{ match.timeStart|date("H:i")}}
               {% if(match.timeEnd) %}
                 &nbsp;-&nbsp;
@@ -30,16 +50,17 @@
           <h2>{{ match.teamA.name }}</h2>
           <h2 id="scoreA" style="float: right">0</h2>
           <hr style="float: none"/>
-          <i class="fas fa-plus-square plusButton" id="plusTeam-A" style='font-size: 60px; color:#5CB85C; cursor: pointer'></i>
-          <i class="fas fa-minus-square minusButton" id="minusTeam-A" style='font-size: 60px; color:#D9534F; cursor: pointer; float: right'></i>
+          <i class="fas fa-plus-square plusButton" id="plusTeam-A"></i>
+          <i class="fas fa-minus-square minusButton" id="minusTeam-A"></i>
+          <br  style="float: none"/>
       </div>
       <div class="teamMatch">
           <h2>{{ match.teamB.name }}</h2>
           <h2 id="scoreB" style="float: right">0</h2>
           <hr style="float: none"/>
-          <i class="fas fa-plus-square plusButton" id="plusTeam-B" style='font-size: 60px; color:#5CB85C; cursor: pointer'></i>
-          <i class="fas fa-minus-square minusButton" id="minusTeam-B" style='font-size: 60px; color:#D9534F; cursor: pointer; float: right'></i>
-
+          <i class="fas fa-plus-square plusButton" id="plusTeam-B"></i>
+          <i class="fas fa-minus-square minusButton" id="minusTeam-B"></i>
+          <br  style="float: none"/>
       </div>
     </section>
 

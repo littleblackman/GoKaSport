@@ -11,7 +11,7 @@ use AppBundle\Entity\TournamentGroup;
 /**
  * Match
  *
- * @ORM\Table(name="game_match")
+ * @ORM\Table(name="match_game")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MatchRepository")
  * @ORM\HasLifecycleCallbacks()
  */
@@ -71,7 +71,6 @@ class Match extends LbmExtensionEntity
      */
     private $timeEnd;
 
-
     /**
      * @var int
      *
@@ -99,6 +98,13 @@ class Match extends LbmExtensionEntity
      * @ORM\Column(name="winner", type="string", length=20, nullable=true)
      */
     public $winner;
+
+    /**
+     *
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="matchs")
+     * @ORM\JoinTable(name="matchs_users")
+     */
+    private $users;
 
 
     /**
@@ -237,6 +243,36 @@ class Match extends LbmExtensionEntity
         $this->timeEnd = $time;
 
         return $this;
+    }
+
+    public function addUser($user)
+    {
+        $this->users[] = $user;
+        $user->addMatch($this);
+        return $this;
+    }
+
+    public function removeUser($user)
+    {
+        $this->users->removeElement($user);
+        return $this;
+    }
+
+    public function getUsers($role = null)
+    {
+        if($role) {
+            $result = [];
+            foreach($this->users as $user) {
+                if($user->getRoleString() == $role) $result[] = $user;
+            }
+            return $result;
+        }
+        return $this->users;
+    }
+
+    public function getReferees()
+    {
+        return $this->getUsers('REFEREE');
     }
 
     /**

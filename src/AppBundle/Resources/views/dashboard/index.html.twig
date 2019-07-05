@@ -11,6 +11,7 @@
 
 <button class="submitButton" style="width: 100%">
   <a href="{{ path('createTournament')}}" style="width: 100%">
+  <i class="fas fa-trophy" style="float:left"></i>
     Créer un tournoi
   </a>
 </button>
@@ -18,9 +19,31 @@
 <br/><br/><br/>
 <button class="submitButton" style="width: 100%; background-color: #f5fec0">
   <a href="{{ path('listTournament')}}" style="width: 100%">
+  <i class="fas fa-trophy" style="float:left"></i>
     Voir Vos tournois
   </a>
 </button>
+
+{% if is_granted('ROLE_MANAGER', 'ROLE_COACH') %}
+  <br/><br/>
+  <hr/>
+  <br/>
+  <button class="submitButton" style="width: 100%">
+    <a href="{{ path('createTournament')}}" style="width: 100%">
+      <i class="fas fa-users" style="float:left"></i>
+      Créer une équipe
+    </a>
+  </button>
+
+  <br/><br/><br/>
+  <button class="submitButton" style="width: 100%; background-color: #f5fec0">
+    <a href="{{ path('listTournament')}}" style="width: 100%">
+      <i class="fas fa-users" style="float:left"></i>
+      Voir les équipes
+    </a>
+  </button>
+{% endif %}
+
 
 
 

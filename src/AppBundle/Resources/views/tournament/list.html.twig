@@ -7,10 +7,12 @@
   <h3 style="font-weight: bold">Ouverts</h3>
   <ul class="listElement">
     {% for tournament in opens %}
-      <li class="listItem">
-        <div>{{tournament.name}}</div>
-        <div style="font-size: 0.9em; font-style: italic">{{tournament.dateStart|date('d/m/Y') ~ ' '~tournament.city}}</div>
-      </li>
+      <a href="{{ path('showMatchGroup', {'tournamentId' : tournament.id })}}">
+        <li class="isOpenTournament">
+          <div>{{tournament.name}}</div>
+          <div style="font-size: 0.9em; font-style: italic">{{tournament.dateStart|date('d/m/Y') ~ ' '~tournament.city}}</div>
+        </li>
+      </a>
     {% endfor %}
   </ul>
   <br/><br/>
@@ -28,7 +30,14 @@
   <ul class="listElement">
     {% for tournament in associates %}
       <li class="listItem">
-        <div><a href="{{ path('showTournament', {'id' : tournament.id })}}">{{tournament.name}}</a></div>
+        <div>
+          {% if tournament.isOpen == 1%}
+            <a href="{{ path('showMatchGroup', {'tournamentId' : tournament.id })}}">
+              <i class="fas fa-running"></i>
+            </a>
+          {% endif %}
+          <a href="{{ path('showTournament', {'id' : tournament.id })}}">{{tournament.name}}</a>
+        </div>
         <div style="font-size: 0.9em; font-style: italic">{{tournament.dateStart|date('d/m/Y') ~ ' '~tournament.city}}</div>
       </li>
     {% endfor %}

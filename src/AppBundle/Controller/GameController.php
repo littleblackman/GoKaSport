@@ -12,14 +12,35 @@ use AppBundle\Service\GameManager;
 
 class GameController extends Controller
 {
+
+    private $gameManager;
+
+    public function __construct(GameManager $gameManager)
+    {
+            $this->gameManager = $gameManager;
+    }
+
     /**
      * @Route("/creation-du-tournoi/{tournamentId}", name="createGame")
      */
-    public function indexAction(Request $request, $tournamentId = null, GameManager $gameManager)
+    public function indexAction(Request $request, $tournamentId = null)
     {
         $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
-        $gameManager->setTournament($tournament);
-        return $this->render('AppBundle:game:create.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager]);
+
+        // block acces to init
+        if($tournament->getIsInit() == 1) {
+          return $this->redirectToRoute('showMatchGroup', ['tournamentId' => $tournamentId]);
+        }
+
+        $val = 2;
+        while($val <= $tournament->countNbTeams() ) {
+          $maxTeamFinalRoundOption[] = $val;
+          $val = $val*2;
+        }
+
+        $maxGroup = floor($tournament->countNbTeams()/3);
+
+        return $this->render('AppBundle:game:create.html.twig', ['tournament' => $tournament, 'maxGroup' => $maxGroup, 'maxTeamFinalRoundOption' => $maxTeamFinalRoundOption]);
     }
 
     /**
@@ -28,64 +49,38 @@ class GameController extends Controller
     public function initGameAction(Request $request, GameManager $gameManager)
     {
         $tournamentId = $request->get('tournamentId');
-        $gameOptionsId = $request->get('gameOptionsId');
-        ($request->get('resetForce')) ? $resetForce = true : $resetForce = false;
+        $gameOptionsArray = $request->get('data');
 
         $em = $this->getDoctrine()->getManager();
-        $gameOptions = $em->getRepository(GameOptions::class)->find($gameOptionsId);
         $tournament = $em->getRepository(Tournament::class)->find($tournamentId);
 
-        if(!$tournamentUpdated = $gameManager->initTournament($tournament, $gameOptions, $resetForce)) {
-            $this->addFlash('error',
+        ($request->get('resetForce')) ? $resetForce = true : $resetForce = false;
+
+        if(!$tournamentInit = $gameManager->initTournament($tournament, $gameOptionsArray, $resetForce)) {
+            $this->addFlash('warning',
                             'Impossible d\'initier le tournoi, les groupes sont déjà créés.<br/>Vous pouvez essayer en forçant la création.'
                           );
-            return $this->render('AppBundle:game:create.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager]);
+            return $this->redirectToRoute('createGame', ['tournamentId' => $tournament->getId()]);
         }
 
-        return $this->redirectToRoute('manageGame', ['tournamentId' => $tournamentId]);
-
-    }
-
-    /**
-     * @Route("/gerer-la-partie/{tournamentId}", name="manageGame")
-     */
-    public function manageGame(Request $request, GameManager $gameManager, $tournamentId)
-    {
-        $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
-
-        // if tournament is valided
-        if($tournament->getIsValided() == 1) return $this->redirectToRoute('showMatchGroup', ['tournamentId' => $tournamentId]);
-
         $gameManager->setTournament($tournament);
-        return $this->render('AppBundle:game:manage.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager]);
-
-    }
-
-    /**
-     * @Route("/generer-les-groupes/{tournamentId}", name="bindGroups")
-     */
-    public function bindGroups(Request $request, GameManager $gameManager, $tournamentId)
-    {
-      $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
-      $gameManager->setTournament($tournament);
-      $gameManager->autoBindGroups();
-      return $this->redirectToRoute('manageGame', ['tournamentId' => $tournamentId]);
-    }
-
-    /**
-     * @Route("/valider-les-groupes/{tournamentId}", name="validGroups")
-     */
-    public function validGroups(Request $request, GameManager $gameManager, $tournamentId)
-    {
-        $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
-        $gameManager->setTournament($tournament);
-
-        if($tournament->getIsValided() == 0) $gameManager->validGroups();
+        $gameManager->autoBindGroups();
+        $gameManager->validGroups();
 
         return $this->redirectToRoute('showMatchGroup', ['tournamentId' => $tournamentId]);
-
     }
 
+
+    /**
+     * @Route("/remettre-zero-tournoi/{tournamentId}", name="resetGame")
+     */
+    public function resetGame(Request $request, $tournamentId)
+    {
+
+        $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
+        $this->gameManager->setTournament($tournament)->resetTournament('groups')->resetTournament('matchs');
+        return $this->redirectToRoute('showTournament', ['id' => $tournamentId]);
+    }
 
     /**
      * @Route("/voir-les-matchs/{tournamentId}", name="showMatchGroup")

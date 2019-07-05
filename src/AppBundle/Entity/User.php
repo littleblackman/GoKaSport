@@ -69,6 +69,13 @@ class User extends LbmExtensionEntity implements UserInterface
     private $tournaments;
 
     /**
+     *
+     * @ORM\ManyToMany(targetEntity="Match", mappedBy="users")
+     * @ORM\JoinTable(name="matchs_users")
+     */
+    private $matchs;
+
+    /**
      * @var Person
      *
      * @ORM\OneToOne(targetEntity="Person", cascade={"persist", "remove"})
@@ -248,6 +255,16 @@ class User extends LbmExtensionEntity implements UserInterface
         return $this->rolesUF[$this->getRoleString()];
     }
 
+    public function addMatch(Match $match)
+    {
+        $this->matchs[] = $match;
+        return $this;
+    }
+
+    public function getMatchs()
+    {
+        return $this->matchs;
+    }
 
     public function addTournament(Tournament $tournament)
     {

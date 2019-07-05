@@ -1,9 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block backButton %}
-    <i class="fas fa-angle-left backbutton" onclick="history.back()"></i>
-{% endblock %}
-
 {% block body %}
      <h1 id="nameTournament-details" class="listButton" style="cursor: pointer">{{tournament.name}}</h1>
     <div style="text-align: center">
@@ -12,8 +8,13 @@
 
     <ul id="detailsList" style="display: none">
         <li class="listItem">
-            <div>{{tournament.city}}</div>
-             <div>{{tournament.dateStart|date('d/m/Y')  }}</div>
+            <div style="font-size: 1.4em">
+                <a href="{{ path('editTournament', {'id' : tournament.id})}}">
+                    <i class="fas fa-edit" style="font-size: 1.4em; margin-right: 10px;"></i>
+                </a>
+                {{tournament.city}}
+            </div>
+             <div style="font-style: italic; font-size: 1em">{{tournament.dateStart|date('d/m/Y')  }}</div>
         </li>
         <li style="text-align: justify">
             {{ tournament.description}}
@@ -25,11 +26,13 @@
     <div id="teamList">
       {% include 'AppBundle:tournament:teamsList.html.twig' with {'teams': tournament.teams} %}
     </div>
-    <div style="display: flex">
-        <i class="fas fa-plus-square" id="button-addTeam" style="font-size: 2.3em; margin-right: 10px;"></i>
-        <input type="text" name="team" placeholder="ajouter une équipe" class="fullWidth" id="addTeam" style="display: none"/>
-    </div>
-    <div id="searchResult-addTeam"></div>
+    {% if tournament.isInit != 1 %}
+        <div style="display: flex">
+            <i class="fas fa-plus-square" id="button-addTeam" style="font-size: 2.3em; margin-right: 10px;"></i>
+            <input type="text" name="team" placeholder="ajouter une équipe" class="fullWidth" id="addTeam" style="display: none"/>
+        </div>
+        <div id="searchResult-addTeam"></div>
+    {% endif %}
 
     <hr style="clear: both"/>
     <h3 style="font-weight: bold" class="listButton" id="listButton-manager">Liste des Organisateur.trice.s</h3>
@@ -54,9 +57,23 @@
     <div id="searchResult-addReferee"></div>
 
     <hr/>
-    <a href="{{ path('createGame', {'tournamentId' : tournament.id })}}" class="btn fullWidth">
-      Initier le tournoi
-    </a>
+    {% if tournament.isInit != 1 %}
+        <a href="{{ path('createGame', {'tournamentId' : tournament.id })}}" class="btn fullWidth">
+          Initier le tournoi
+        </a>
+    {% else %}
+        <a href="{{ path('showMatchGroup', {'tournamentId' : tournament.id })}}" class="btn--info fullWidth">
+          Voir la compétition
+        </a>
+        <br/><br/>
+        <a href="{{ path('openTournament', {'tournamentId' : tournament.id})}}" class="btn--success fullWidth">
+          Démarrer le tournoi
+        </a>
+        <br/><br/><br/>
+        <a href="{{ path('resetGame', {'tournamentId' : tournament.id})}}" class="btn--warning fullWidth">
+          Reset : Groupes et/ou Tableau Final
+        </a>
+    {% endif %}
     {% if tournament.getCreatedBy == app.user and tournament.isOpen != 1 %}
         <br/><br/>
         <a href="{{ path('delTournament', {'id' : tournament.id })}}" class="btn--danger fullWidth">

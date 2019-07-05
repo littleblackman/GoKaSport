@@ -21,15 +21,13 @@ class GameManager
   private $tournament;
 
   /**
-   * Array of GameOptions object
+   * GameOptions object
    */
   private $gameOptions;
 
   public function __construct(EntityManagerInterface $em)
   {
       $this->em = $em;
-      $gameOptions = $em->getRepository(GameOptions::class)->findBy(['totalTeams' => 16]);
-      $this->gameOptions = $gameOptions;
   }
 
   /**
@@ -54,79 +52,112 @@ class GameManager
    * init all options tournament
    * create all matches
    */
-  public function initTournament(Tournament $tournament, GameOptions $gameOptions, $reset = false)
+  public function initTournament(Tournament $tournament, Array $gameOptionsArray = [], $reset = false)
   {
       $em = $this->em;
+      $this->tournament = $tournament;
 
       // if tournamenent is init
       if($tournament->getIsInit() == 1) {
-
           // if tournament is not forced reset return true
-          if($reset == false)
-          {
-            return false;
-          }
-
+          if($reset == false) return false;
           // otherwise reset tournament
           $this->resetTournament();
       }
 
+      /***** CREATE GAMES OPTIONS *****/
+      $gameOptions = new GameOptions();
+      if($gameOptionsArray['type'] == 'group') {
+        $gameOptions->setNbGroupsFirstRound($gameOptionsArray['nbGroups']);
+      } else {
+        $gameOptions->setNbStepRoundFinal($gameOptionsArray['nbFinalRound']*2);
+      }
+      $gameOptions->setTotalTeams($tournament->countNbTeams());
+      $em->persist($gameOptions);
+
       // add gameOptions to Tournament
       $tournament->setGameOptions($gameOptions);
 
-      // create groups round
-      if($gameOptions->getNbGroupsFirstRound() != 0)
-      {
-          // create groups
-          for($i = 1; $i <= $gameOptions->getNbGroupsFirstRound(); $i++) {
-              $group = new TournamentGroup();
-              $group->setOrderGroup($i);
-              $group->setName('Groupe '.chr(64+$i));
-
-              // add group to tournament
-              $tournament->addGroup($group);
-
-              $em->persist($group);
-              $em->persist($tournament);
-          }
-
-      }
-
-      // create final round & final empty matches
-      $diviseur = 1;
-      for($k = $gameOptions->getNbStepRoundFinal(); $k > 0; $k--)
-      {
-          $diviseur = $diviseur * 2;
-
-          $finalRound = new TournamentFinalRound();
-          $finalRound->setStep($k);
-          $finalRound->setName(self::STEP_NAME[$k]);
-
-          // add the final round
-          $tournament->addFinalRound($finalRound);
-
-          for($m = 1; $m <= $gameOptions->getNbTeamsRoundFinal()/$diviseur; $m++)
-          {
-              $match = new Match();
-              $match->setStatus('EMPTY');
-              $match->setPosition($m);
-              $em->persist($match);
-
-              // add match to final round
-              $finalRound->addMatch($match);
-          }
-
-          $em->persist($finalRound);
-          $em->persist($tournament);
-
+      /***** CREATE GROUP-ROUND *****/
+      if($gameOptionsArray['type'] == 'group') {
+          $tournament = $this->createGroupsRound($tournament, $gameOptions);
+      } else {
+          /***** CREATE FIRST-ROUND *****/
+          $tournament = $this->createFinalRoundMatch($tournament, $gameOptions);
       }
 
       $tournament->setIsInit(1);
 
+      $em->persist($tournament);
       $em->flush();
 
       return $tournament;
+  }
 
+  /**
+   * Create final round match
+   * @param Tournament
+   * @param GameOptions
+   * @return Tournament
+   */
+  private function createFinalRoundMatch(Tournament $tournament, GameOptions $gameOptions) {
+    // create final round & final empty matches
+    $diviseur = 1;
+    for($k = $gameOptions->getNbStepRoundFinal(); $k > 0; $k--)
+    {
+        $diviseur = $diviseur * 2;
+
+        $finalRound = new TournamentFinalRound();
+        $finalRound->setStep($k);
+        $finalRound->setName(self::STEP_NAME[$k]);
+
+        // add the final round
+        $tournament->addFinalRound($finalRound);
+
+        for($m = 1; $m <= $gameOptions->getNbTeamsRoundFinal()/$diviseur; $m++)
+        {
+            $match = new Match();
+            $match->setStatus('EMPTY');
+            $match->setPosition($m);
+            $em->persist($match);
+
+            // add match to final round
+            $finalRound->addMatch($match);
+        }
+        $tournament->setCompetitionType('FINAL-ROUND');
+        $em->persist($finalRound);
+        $em->persist($tournament);
+    }
+    $em->flush();
+    return $tournament;
+  }
+
+  /**
+   * Create groups for tournament (no matchs created)
+   * @param Tournament
+   * @param GameOptions
+   * @return Tournament
+   */
+  private function createGroupsRound(Tournament $tournament, GameOptions $gameOptions)
+  {
+      $em = $this->em;
+
+      // create groups
+      for($i = 1; $i <= $gameOptions->getNbGroupsFirstRound(); $i++) {
+          $group = new TournamentGroup();
+          $group->setOrderGroup($i);
+          $group->setName('Groupe '.chr(64+$i));
+
+          // add group to tournament
+          $tournament->addGroup($group);
+
+          $tournament->setCompetitionType('GROUP-ROUND');
+
+          $em->persist($group);
+          $em->persist($tournament);
+      }
+      $em->flush();
+      return $tournament;
   }
 
   /**
@@ -175,13 +206,14 @@ class GameManager
       $teams = $teams->toArray();
       $groups = $tournament->getGroups();
 
+
       foreach($groups as $group)
       {
           $this->resetGroupTeams($group);
 
-          for($i = 0; $i<$tournament->getMatchPerGroup(); $i++)
+          for($i = 0; $i< floor($tournament->getMatchPerGroup()); $i++)
           {
-                $key = rand(0, count($teams)- 1);
+                $key = rand(0, count($teams)-1);
                 $group->addTeam($teams[$key]);
                 unset($teams[$key]);
                 sort($teams);
@@ -189,6 +221,7 @@ class GameManager
 
           $em->persist($group);
       }
+
 
       if($addTeams = $this->getTeamsWithoutGroup()) {
         $i = 0;
@@ -372,7 +405,7 @@ class GameManager
       $em = $this->em;
 
       // reset matchs
-      if($type != null && $type== 'matchs') {
+      if($type == null || $type== 'matchs') {
           if($groups = $em->getRepository(TournamentGroup::class)->findBy(['tournament' => $tournament]))
           {
               foreach($groups as $group)
@@ -395,7 +428,7 @@ class GameManager
       }
 
       // reset groups & finalround
-      if($type != null &&  ( $type == 'groups' || $type == "teams") ){
+      if($type == null ||  $type == 'groups' || $type == "teams" ){
           if($groups = $em->getRepository(TournamentGroup::class)->findBy(['tournament' => $tournament])) {
               foreach($groups as $group)
               {
@@ -419,15 +452,17 @@ class GameManager
                   $tournament->removeTeam($team);
               }
 
-              $tournament->setIsInit(0);
           }
 
+          $tournament->setIsInit(0);
           $tournament->setIsValided(0);
           $tournament->setIsOpen(0);
       }
 
       $em->persist($tournament);
       $em->flush();
+
+      return $this;
 
   }
 
