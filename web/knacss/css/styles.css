@@ -83,6 +83,8 @@ a:link { text-decoration:none}
 #user_player_person_birthdate { display: flex; justify-content: space-between;}
 #user_player_person_birthdate select { width: 30%}
 
+#user_player_person_player_position { width: 100%}
+
 
 .isOpenTournament {     height: 60px!important;
     background-color: #caf2d7;

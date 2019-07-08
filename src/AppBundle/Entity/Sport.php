@@ -30,7 +30,7 @@ class Sport
     private $name;
 
     /**
-    * @ORM\Column(name="description", type="string")
+    * @ORM\Column(name="description", type="string", nullable=true)
     */
     private $description;
 

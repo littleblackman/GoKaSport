@@ -22,8 +22,8 @@ class UserPlayerType extends AbstractType
     {
 
         $builder
-              ->add('email', EmailType::class, ['attr' => ['placeholder' => 'Email', 'autocomplete' => 'email-'.rand(1,10000)]])
-              ->add('password', PasswordType::class, ['attr' => ['placeholder' => 'Mot de passe', 'autocomplete' => 'new-password']])
+              ->add('email', EmailType::class, ['attr' => ['placeholder' => 'Email', 'autocomplete' => 'email-'.rand(1,100000)]])
+              ->add('password', PasswordType::class, ['attr' => ['placeholder' => 'Mot de passe', 'autocomplete' => 'new-password-'.rand(1,10000)]])
               ->add('roles', HiddenType::class, ['data' => 'ROLE_PLAYER'])
               ->add('person', PersonType::class);
     }

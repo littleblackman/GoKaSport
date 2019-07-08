@@ -7,6 +7,7 @@ use AppBundle\Entity\TournamentFinalRound;
 use AppBundle\Entity\Team;
 use AppBundle\Entity\Match;
 use AppBundle\Entity\TournamentGroup;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Match

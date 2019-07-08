@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-     <h1 id="nameTeam-details" class="listButton" style="cursor: pointer">{{team.name}}</h1>
+     <h1 id="nameTeam-details" class="listButtonTeam" style="cursor: pointer">{{team.name}}</h1>
     <div style="text-align: center">
         Créé par <b>{{ team.getCreatedBy.person.fullname}}</b>
     </div>
@@ -70,6 +70,13 @@
         $('.fa-plus-square').click(function() {
             let target = $(this).attr('id').split('-')[1];
             $('#'+target).toggle();
+        })
+
+
+        // toggle list function
+        $('.listButtonTeam').click(function() {
+            let target = $(this).attr('id').split('-')[1];
+            $('#'+target+'List').toggle();
         })
 
 

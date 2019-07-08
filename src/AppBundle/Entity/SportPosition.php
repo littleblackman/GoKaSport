@@ -27,9 +27,14 @@ class SportPosition
     */
     private $name;
 
+    /**
+    * @ORM\Column(name="abbreviation", type="string")
+    */
+    private $abbreviation;
+
 
     /**
-    * @ORM\Column(name="description", type="string")
+    * @ORM\Column(name="description", type="string", nullable=true)
     */
     private $description;
 
@@ -70,6 +75,29 @@ class SportPosition
         $this->name = $name;
         return $this;
     }
+
+    /**
+     * Get $abbreviation
+     *
+     * @return string
+     */
+    public function getAbbreviation()
+    {
+        return $this->abbreviation;
+    }
+
+    /**
+     * Set $abbreviation
+     *
+     * @return SportPosition
+     */
+    public function setAbbreviation($abbreviation)
+    {
+        $this->abbreviation = $abbreviation;
+        return $this;
+    }
+
+
 
     /**
      * Get name

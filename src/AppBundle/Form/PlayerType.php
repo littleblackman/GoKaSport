@@ -20,6 +20,7 @@ class PlayerType extends AbstractType
         unset($_SESSION['sport']);
 
         $builder
+            ->add('shirtNumber', TextType::class, ['attr' => ['placeholder' => 'Numéro de maillot']])
             ->add('position', EntityType::class, [
                                            'label' => 'Poste',
                                            'class' => 'AppBundle\Entity\SportPosition',

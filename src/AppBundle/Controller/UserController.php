@@ -57,13 +57,21 @@ class UserController extends Controller
   }
 
   /**
-   * @Route("/creation-joueur/{team_id}/{type_call}", name="editPlayerForm")
+   * @Route("/creation-joueur/{team_id}/{type_call}/{user_id}", name="editPlayerForm", defaults={"user_id": null})
    */
   public function editPlayerForm(Request $request, UserPasswordEncoderInterface $encoder, $team_id = null, $type_call = null)
   {
     $em = $this->em;
 
-    $user = new User();
+    $user_id = $request->get('user_id');
+
+    if($user_id) {
+      $user = $em->getRepository(User::class)->find($user_id);
+      $isNew = 0;
+    } else {
+      $user = new User();
+      $isNew = 1;
+    }
     $team = $em->getRepository(Team::class)->find($team_id);
 
     $sport = $team->getSport();
@@ -76,25 +84,36 @@ class UserController extends Controller
     if($form->isValid() && $form->isSubmitted())
     {
         $datas = $form->getData();
-        $encoded = $encoder->encodePassword($user, $datas->getPassword());
 
-        $fname = strtolower(str_replace(array(' ',"'", '-', 'é', 'è', 'ï'), array('', '', '', 'e', 'e', 'i'), $datas->getPerson()->getFirstname()));
-        $lname = ucfirst(strtolower(str_replace(array(' ',"'", '-', 'é', 'è', 'ï'), array('', '', '', 'e', 'e', 'i'), $datas->getPerson()->getLastname())));
-        $username = $fname.$lname;
+        if($isNew == 1) {
+          $fname = strtolower(str_replace(array(' ',"'", '-', 'é', 'è', 'ï'), array('', '', '', 'e', 'e', 'i'), $datas->getPerson()->getFirstname()));
+          $lname = ucfirst(strtolower(str_replace(array(' ',"'", '-', 'é', 'è', 'ï'), array('', '', '', 'e', 'e', 'i'), $datas->getPerson()->getLastname())));
+          $username = $fname.$lname;
+          $user->setUsername($username);
+        }
 
-        $user->setUsername($username);
-        $user->setPassword($encoded);
+        if($datas->getPassword() != "" || $datas->getPassword() != null) {
+          $encoded = $encoder->encodePassword($user, $datas->getPassword());
+          $user->setPassword($encoded);
+        }
+
         $user->setRole([$datas->getRole()]);
         $em->persist($user);
-        $team->addUser($user);
-        $em->persist($team);
+
+        if($isNew == 1) {
+          $team->addUser($user);
+          $em->persist($team);
+        }
+
         $em->flush();
-        $this->addFlash('success', 'Compte créé ! Connectez-vous');
+
+        ($isNew == 1) ? $message = 'Compte créé ! Connexion possible' : $message = 'Compte mis à jour !';
+        $this->addFlash('success', $message );
         return $this->redirectToRoute('login');
     }
 
 
-    return $this->render('AppBundle:user:editPlayer.html.twig', ['form' => $form->createView(), 'type_call' => $type_call, 'team_id' => $team_id, 'sport_name' => $sport->getName()]);
+    return $this->render('AppBundle:user:editPlayer.html.twig', ['form' => $form->createView(), 'type_call' => $type_call,'user_id' => $user_id, 'team_id' => $team_id, 'sport_name' => $sport->getName()]);
   }
 
   /**

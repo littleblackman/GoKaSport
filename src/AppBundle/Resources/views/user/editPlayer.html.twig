@@ -8,6 +8,8 @@
   {{ form_start(form,  {'attr': {'id': 'edit-player'}}) }}
     <div class="flex-container--column">
 
+        <input type="hidden" name="user_id" value="{{user_id}}" id="currentUserId"/>
+
         <input type="hidden" name="team_id" value="{{team_id}}" id="currentTeamId"/>
 
         <div>
@@ -48,6 +50,11 @@
           {{ form_widget(form.person.player.position)}}
           {{ form_errors(form.person.player.position)}}
         </div>
+        <div>
+          {{ form_widget(form.person.player.shirtNumber)}}
+          {{ form_errors(form.person.player.shirtNumber)}}
+        </div>
+
         <hr/>
      </div>
   <input type="submit" class="btn--inverse" value="Créer" />
@@ -59,6 +66,12 @@
 
 {% if type_call == 'ajaxCall' %}
 <script>
+
+  let user_id = $('#currentUserId').val();
+  if( user_id > 1) {
+    $('#currentUserId').prop('required',false);
+    console.log('hello');
+  }
 
   $('#closeSplashModal').click(function() {
     let urlPlayerList = "{{ path('playerListTeam')}}";

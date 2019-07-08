@@ -1,11 +1,18 @@
-<ol id="playersListTeamOl" style="columns: 2;">
+<ul id="playersListTeamOl" style="columns: 2;">
   {% for user in users %}
-    <li class="playersListTeam" id="playersListTeam-{{ user.id }}-{{ user.roleString|lower }}">
-      {{ user.person.fullname}} <br/>
-      <i style="font-size: 10px">{{ user.person.player.positionName}}</i>
+    <li>
+      <div>
+        <b>{{user.person.player.shirtNumber}}</b>
+        <span class="userPlayerName" id="userPlayerName-{{ user.id}}">
+          {{ user.person.fullname}}
+        </span>
+        <div class="playersListTeam" id="playersListTeam-{{ user.id }}-{{ user.roleString|lower }}"
+        style="float: right; color: darkred; width: 20px; font-weight: bold; cursor: pointer">x</div>
+      </div>
+      <i style="font-size: 10px">{{ user.person.player.positionName|capitalize}}</i>
     </li>
   {% endfor %}
-</ol>
+</ul>
 <script>
 $('.playersListTeam').click(function() {
     var url = "{{ path('deletePlayerTeam')}}";
@@ -13,5 +20,12 @@ $('.playersListTeam').click(function() {
     var userId = $(this).attr('id').split('-')[1];
     var target = $(this).attr('id').split('-')[2];
     $('#'+target+'List').load(url+'/'+teamId+'/'+userId);
+})
+
+$('.userPlayerName').click(function() {
+    $('#splashModal').toggle();
+    let url = "{{ path('editPlayerForm')}}";
+    let userId = $(this).attr('id').split('-')[1];
+    $('#splashModalContent').load(url+'/'+teamId+'/ajaxCall/'+userId);
 })
 </script>
