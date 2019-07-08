@@ -114,6 +114,12 @@ class Tournament extends LbmExtensionEntity
     private $competitionType;
 
     /**
+    * @ORM\ManyToOne(targetEntity="Sport")
+    * @ORM\JoinColumn(name="sport_id", referencedColumnName="id", nullable=true)
+    */
+    private $sport;
+
+    /**
      *
      * @ORM\ManyToMany(targetEntity="Team", inversedBy="tournaments")
      * @ORM\JoinTable(name="tournaments_teams")
@@ -234,6 +240,17 @@ class Tournament extends LbmExtensionEntity
         $this->dateStart = $dateStart;
 
         return $this;
+    }
+
+    public function setSport(Sport $sport)
+    {
+        $this->sport = $sport;
+        return $this;
+    }
+
+    public function getSport()
+    {
+        return $this->sport;
     }
 
     /**

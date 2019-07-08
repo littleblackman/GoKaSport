@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Entity\Team;
 use AppBundle\Form\PlayerType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 
 
@@ -22,22 +23,12 @@ class TeamType extends AbstractType
               ->add('description', TextareaType::class, ['required' => false])
               ->add('city', TextType::class, ['label' => 'Ville'] )
               ->add('postalCode', TextType::class, ['label' => 'Code Postal'])
-              ->add('sportClass', TextType::class, ['label' => 'Catégorie'])
-              ->add(
-                    'players', CollectionType::class, array(
-                                                              'entry_type' => PlayerType::class,
-                                                              'entry_options' => array('label' => false),
-                                                              'label' => false,
-                                                              'required' => true,
-                                                              'allow_add' => true,
-                                                              'allow_delete' => true,
-                                                              'prototype' => true,
-                                                              'by_reference' => true    ,
-                                                              'mapped' => true,
-                                                            )
-                    );
-
-
+              ->add('sport', EntityType::class, [
+                                                     'label' => 'Sport',
+                                                     'class' => 'AppBundle\Entity\Sport',
+                                                     'choice_label' => 'name',
+                                                     'required'   => false,])
+              ->add('sportClass', TextType::class, ['label' => 'Catégorie']);
 
     }
 

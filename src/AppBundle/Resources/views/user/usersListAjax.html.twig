@@ -9,12 +9,16 @@
 
       let role = "{{ role }}";
 
-      console.log(role);
-      var url = "{{ path('addUser')}}";
-      var tournamentId = sessionStorage.getItem('tournamentId');
+      if(role == "coach") {
+        var url = "{{ path('addCoachTeam')}}";
+        var targetId = sessionStorage.getItem('teamId');
+      } else {
+        var url = "{{ path('addUser')}}";
+        var targetId = sessionStorage.getItem('tournamentId');
+      }
+
       var userId = $(this).attr('id').split('-')[1];
       $('#searchUsersList').html(' ');
-
-      $('#'+role+'List').load(url+'/'+tournamentId+'/'+userId);
+      $('#'+role+'List').load(url+'/'+targetId+'/'+userId);
   })
 </script>

@@ -22,4 +22,30 @@ class TeamRepository extends \Doctrine\ORM\EntityRepository
             ;
     }
 
+    public function findByCreatedBy($user)
+    {
+      return $this
+            ->createQueryBuilder('t')
+            ->where('t.createdBy = :user')
+            ->setParameter(':user', $user)
+            ->orderBy('t.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+    }
+
+
+    public function findAssociated($user_id)
+    {
+      return $this
+            ->createQueryBuilder('t')
+            ->innerJoin('t.users', 'u')
+            ->where('u.id = :user_id')
+            ->setParameter(':user_id', $user_id)
+            ->orderBy('t.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+    }
+
 }

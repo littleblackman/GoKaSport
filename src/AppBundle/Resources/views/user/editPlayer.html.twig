@@ -1,0 +1,133 @@
+<div id="editPlayerModal">
+  <h2>Création de Joueur.euse</h2>
+
+  <div id="flashMessage" class="alert--success" style="display:none">
+  </div>
+
+
+  {{ form_start(form,  {'attr': {'id': 'edit-player'}}) }}
+    <div class="flex-container--column">
+
+        <input type="hidden" name="team_id" value="{{team_id}}" id="currentTeamId"/>
+
+        <div>
+          {{ form_widget(form.person.firstname)}}
+          {{ form_errors(form.person.firstname)}}
+        </div>
+
+        <div>
+          {{ form_widget(form.person.lastname)}}
+          {{ form_errors(form.person.lastname)}}
+        </div>
+
+        <div>
+          {{ form_widget(form.email)}}
+          {{ form_errors(form.email)}}
+        </div>
+
+        <div id="emailProposal" style="font-size: 11px; font-style: italic; color: darkgrey">
+
+        </div>
+
+        <div>
+          {{ form_widget(form.password)}}
+          {{ form_errors(form.password)}}
+        </div>
+        <br/>
+        <div>
+          <h3 style="text-align: center">{{ form_label(form.person.birthdate)}}</h3>
+          {{ form_widget(form.person.birthdate)}}
+          {{ form_errors(form.person.birthdate)}}
+        </div>
+        <br/>
+        <div>
+          <h3 style="text-align: center">{{ sport_name }}</h3>
+          <div style="text-align: center">
+            {{ form_label(form.person.player.position)}}
+          </div>
+          {{ form_widget(form.person.player.position)}}
+          {{ form_errors(form.person.player.position)}}
+        </div>
+        <hr/>
+     </div>
+  <input type="submit" class="btn--inverse" value="Créer" />
+
+  {{ form_end(form)}}
+
+</div>
+
+
+{% if type_call == 'ajaxCall' %}
+<script>
+
+  $('#closeSplashModal').click(function() {
+    let urlPlayerList = "{{ path('playerListTeam')}}";
+    urlPlayerList = urlPlayerList+'/'+sessionStorage.getItem('teamId');
+    $('#playerList').load(urlPlayerList);
+  })
+
+  $('#user_player_person_lastname').focusout(function() {
+    let firstname = $('#user_player_person_firstname').val();
+    let lastname = $('#user_player_person_lastname').val();
+    $('#user_player_email').val(firstname.toLowerCase()+'.'+lastname.toLowerCase()+'@email.net');
+    $('#emailProposal').html("Si le.a joueur.euse n'a pas d'email, laissez celui par défaut, il servira d'identifiant pour se connecter");
+  })
+
+  $('#user_player_email').focusout(function() {
+    let userEmailExist = "{{ path('userEmailExist')}}";
+    userEmailExist = userEmailExist+'/'+$('#user_player_email').val();
+    $.ajax({
+       url : userEmailExist,
+       type : 'GET',
+       dataType : 'json',
+       success : function(data, statut){
+         if(data['user'] != null) {
+           $('#emailProposal').html('<span style="color: red">Cet email existe déjà, merci d\'en choisir un autre ou de retrouver votre compte</span>')
+         } else {
+           $('#emailProposal').html('<span style="color: green">Email accepté</span>');
+
+         }
+       }
+     })
+
+
+  })
+
+
+  $('#edit-player').submit(function(e) {
+    e.preventDefault();
+     let data_str = $( "#edit-player" ).serialize();
+     let url = "{{ path('addUserTeamAjax')}}";
+     url = url+'?'+data_str;
+
+     $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'json',
+        success : function(data, statut){
+
+          let player = data['player'];
+
+            // update list Player
+            let message = '<b>'+player['person']['firstname']+' '+player['person']['lastname']+'</b> a bien été ajouté à l\'équipe';
+            message += '<br/> <span style="color: black">Vous pouvez ajouter un.e autre joueur.euse</span>'
+            $('#flashMessage').show();
+            $('#flashMessage').html(message);
+
+            setTimeout(function(){
+              $('#flashMessage').hide();
+              $('#flashMessage').empty();
+            }, 5000);
+
+            // empty field
+            $("#edit-player")[0].reset();
+            $('#emailProposal').empty();
+
+        }
+     });
+
+
+
+  })
+</script>
+{% endif %}

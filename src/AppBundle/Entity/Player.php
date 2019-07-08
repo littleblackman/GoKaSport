@@ -9,6 +9,9 @@ use AppBundle\Entity\MatchDetails;
 /**
  * Player
  *
+ * // Nb : Architecture User > Person > Player in creation
+ *        in use it can be player > person > user
+ *
  * @ORM\Table(name="player")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlayerRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -25,11 +28,10 @@ class Player extends LbmExtensionEntity
     private $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="position", type="string", length=30, nullable=true)
-     */
-    private $position;
+      * @ORM\ManyToOne(targetEntity="SportPosition")
+      * @ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
+      */
+      private $position;
 
     /**
      * @var string
@@ -39,10 +41,11 @@ class Player extends LbmExtensionEntity
     private $avatar;
 
     /**
-    * @ORM\ManyToOne(targetEntity="Team", inversedBy="players", cascade={"persist"})
-    * @ORM\JoinColumn(name="team_id", referencedColumnName="id")
-    */
-    private $team;
+     * @var string
+     *
+     * @ORM\Column(name="shirt_number", type="string", length=10, nullable=true)
+     */
+    private $shirtNumber;
 
     /**
     * @var ArrayCollection
@@ -70,34 +73,15 @@ class Player extends LbmExtensionEntity
         return $this->id;
     }
 
-    /**
-     * Get firstName
-     *
-     * @return string
-     */
-    public function getFirstName()
-    {
-        return $this->getPerson()->getFirstname();
-    }
-
-    /**
-     * Get lastName
-     *
-     * @return string
-     */
-    public function getLastName()
-    {
-        return $this->getPerson()->getLastname();
-    }
 
     /**
      * Set position
      *
-     * @param string $position
+     * @param SportPosition
      *
      * @return Player
      */
-    public function setPosition($position)
+    public function setPosition(SportPosition $position)
     {
         $this->position = $position;
 
@@ -107,11 +91,21 @@ class Player extends LbmExtensionEntity
     /**
      * Get position
      *
-     * @return string
+     * @return SportPosition
      */
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * Get position
+     *
+     * @return string
+     */
+    public function getPositionName()
+    {
+        return $this->getPosition()->getName();
     }
 
     /**
@@ -139,27 +133,29 @@ class Player extends LbmExtensionEntity
     }
 
     /**
-     * Set team
+     * Set shirtNumber
      *
-     * @param Object $team
+     * @param string $shirtNumber
      *
      * @return Player
      */
-    public function setTeam(Team $team)
+    public function setShirtNumber($shirtNumber)
     {
-        $this->team = $team;
+        $this->shirtNumber = $shirtNumber;
+
         return $this;
     }
 
     /**
-     * Get team
+     * Get shirtNumber
      *
-     * @return Object
+     * @return string
      */
-    public function getTeam()
+    public function getShirtNumber()
     {
-        return $this->team;
+        return $this->shirtNumber;
     }
+
 
     public function getPerson()
     {
@@ -171,5 +167,22 @@ class Player extends LbmExtensionEntity
         $this->person = $person;
 
         return $this;
+    }
+
+    public function getSport()
+    {
+      return $this->getPosition()->getSport();
+    }
+
+    public function getSportName()
+    {
+      return $this->getSport()->getName();
+    }
+
+    public function toArray()
+    {
+      $objectArray = get_object_vars($this);
+
+      return $objectArray;
     }
 }

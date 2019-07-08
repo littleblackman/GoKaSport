@@ -2,6 +2,7 @@
 
 {% block body %}
      <h1 id="nameTournament-details" class="listButton" style="cursor: pointer">{{tournament.name}}</h1>
+     <h3>{{ tournament.sport.name|upper}}</h3>
     <div style="text-align: center">
         Créé par <b>{{ tournament.getCreatedBy.person.fullname}}</b>
     </div>

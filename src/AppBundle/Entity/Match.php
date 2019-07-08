@@ -261,7 +261,7 @@ class Match extends LbmExtensionEntity
     public function getUsers($role = null)
     {
         if($role) {
-            $result = [];
+          $result = new ArrayCollection;
             foreach($this->users as $user) {
                 if($user->getRoleString() == $role) $result[] = $user;
             }

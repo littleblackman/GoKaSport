@@ -22,7 +22,9 @@ class PersonType extends AbstractType
                                                                             'format' => 'dd MM yyyy',
                                                                             'widget' => 'choice',
                                                                             'years' => range(date('Y')-60, date('Y')-1),
-                                                                        ]);
+                                                                        ])
+              ->add('player', PlayerType::class);
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

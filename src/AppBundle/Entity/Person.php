@@ -56,6 +56,21 @@ class Person extends LbmExtensionEntity
      */
     private $birthdate;
 
+    /**
+     * @var Player
+     *
+     * @ORM\OneToOne(targetEntity="Player", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="player_id", referencedColumnName="id")
+     */
+    private $player;
+
+    /**
+     * @var User
+     *
+     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
 
     public function getId()
     {
@@ -124,6 +139,31 @@ class Person extends LbmExtensionEntity
       return $this;
     }
 
+    public function getPlayer()
+    {
+        return $this->player;
+    }
+
+
+    public function setPlayer(Player $player)
+    {
+        $this->player = $player;
+        $player->setPerson($this);
+        return $this;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+
     public function getAge()
     {
         if($this->getBirthdate() == null) return null;
@@ -131,6 +171,12 @@ class Person extends LbmExtensionEntity
         $datetime2 = new DateTime("now");
         $interval = $datetime1->diff($datetime2);
         return $interval->y;
+    }
+
+    public function toArray()
+    {
+      $objectArray = get_object_vars($this);
+      return $objectArray;
     }
 
 }

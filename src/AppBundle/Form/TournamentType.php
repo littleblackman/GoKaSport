@@ -8,6 +8,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,6 +26,12 @@ class TournamentType extends AbstractType
         $builder
               ->add('name', TextType::class, ['attr' => ['placeholder' => 'Nom']])
               ->add('description', TextareaType::class, ['required' => false])
+              ->add('sport', EntityType::class, [
+                                              'label' => 'Sport',
+                                              'class' => 'AppBundle\Entity\Sport',
+                                              'choice_label' => 'name',
+                                              'required'   => false,
+                                          ])
               ->add('dateStart', DateType::class, [
                                                     'label' => 'Date du tournoi',
                                                     'format' => 'dd MM yyyy',
@@ -33,19 +41,7 @@ class TournamentType extends AbstractType
               ->add('address', TextType::class, ['attr' => ['placeholder' => 'Adresse']])
               ->add('city', TextType::class, ['attr' => ['placeholder' => 'Ville']] )
               ->add('postalCode', TextType::class, ['attr' => ['placeholder' => 'Code Postal']]);
-              /*
-              ->add('isOpen', ChoiceType::class, [
-                                                      'label' => 'Ouvert',
-                                                      'choices' => ['non' => 0, 'oui' => 1]
-                                                    ])
-              ->add('isInit', ChoiceType::class, [
-                                                      'label' => 'Equipes complète',
-                                                      'choices' => ['non' => 0, 'oui' => 1]
-                                                    ])
-              ->add('isValided', ChoiceType::class, [
-                                                      'label' => 'Groupes validés',
-                                                      'choices' => ['non' => 0, 'oui' => 1]
-                                                    ]);*/
+
 
 
         $builder->get('dateStart')->addModelTransformer(new CallbackTransformer(

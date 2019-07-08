@@ -66,7 +66,13 @@ class TournamentController extends Controller
 
         if($form->isValid() && $form->isSubmitted())
         {
-            $tournament->setCreatedBy($tokenStorage->getToken()->getUser());
+            if($tournament->getId()>0) {
+                $tournament->setUpdatedBy($tokenStorage->getToken()->getUser());
+
+            } else {
+                $tournament->setCreatedBy($tokenStorage->getToken()->getUser());
+            }
+
             $em->persist($tournament);
             $em->flush();
             return $this->redirectToRoute('showTournament', ['id' => $tournament->getId()]);

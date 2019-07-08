@@ -1,31 +1,31 @@
-{% extends 'AppBundle:team:_template.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block bodyTeam %}
+{% block body %}
 
-    {% for team in teams %}
-        <h3 class="teamName">
-            {{team.name}}
-            <a href="{{ path('editTeam', {id: team.id})}}" style="float: right">
-              <i class="fas fa-edit"></i>
-            </a>
-            <a href="{{ path('delTeam', {id: team.id})}}" style="float: right">
-              <i class="far fa-trash-alt"></i>
-            </a>
-        </h3>
-        <div class="playersList" style="display: none">
-            <ul>
-            {% for player in team.players %}
-                <li>{{ player.person.fullname}}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {% endfor %}
+<h1>Liste des équipes</h1>
+<hr/>
+
+<h3 style="font-weight: bold">Mes équipes</h3>
+<ul class="listElement">
+  {% for team in owners %}
+    <li class="listItem">
+    <div><a href="{{ path('showTeam', {'teamId' : team.id })}}">{{team.name}}</a></div>
+    </li>
+  {% endfor %}
+</ul>
+<br/><br/>
+<hr/>
+
+<h3 style="font-weight: bold">Mes équipes associées</h3>
+<ul class="listElement">
+  {% for team in associates %}
+    <li class="listItem">
+    <div><a href="{{ path('showTeam', {'teamId' : team.id })}}">{{team.name}}</a></div>
+    </li>
+  {% endfor %}
+</ul>
+<br/><br/>
 
 
-    <script type="text/javascript">
-        $('.teamName').on('click', function(){
-            $(this).next().toggle();
-        })
-    </script>
 
 {% endblock %}

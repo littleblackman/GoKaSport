@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+     <h1 id="nameTeam-details" class="listButton" style="cursor: pointer">{{team.name}}</h1>
+    <div style="text-align: center">
+        Créé par <b>{{ team.getCreatedBy.person.fullname}}</b>
+    </div>
+
+    <ul id="detailsList" style="display: none">
+        <li class="listItem">
+            <div style="font-size: 1.4em">
+                <a href="{{ path('editTeam', {'id' : team.id})}}">
+                    <i class="fas fa-edit" style="font-size: 1.4em; margin-right: 10px;"></i>
+                </a>
+                {{team.city}}
+            </div>
+        </li>
+        <li style="text-align: justify">
+            {{ team.description}}
+        </li>
+    </ul>
+
+    <hr style="clear: both"/>
+    <h3 style="font-weight: bold" class="listButton" id="listButton-coach">Liste des Coach.s</h3>
+    <div id="coachList">
+      {% include 'AppBundle:team:usersList.html.twig' with {'users': team.coachs} %}
+    </div>
+    <div style="display: flex">
+        <i class="fas fa-plus-square" id="button-addCoach" style="font-size: 2.3em; margin-right: 10px;"></i>
+        <input type="text" name="coach" placeholder="ajouter un.e coach" class="fullWidth" id="addCoach" style="display: none"/>
+    </div>
+    <div id="searchResult-addCoach"></div>
+
+    <br/>
+    <hr style="clear: both"/>
+    <h3 style="font-weight: bold" class="listButton" id="listButton-player">
+        <i class="fas fa-plus-square" id="button-addPlayer" style="font-size: 2.3em; margin-right: 10px; float: left"></i>
+        Liste des Joueur.euse.s
+    </h3>
+    <br/>
+    <div id="playerList">
+      {% include 'AppBundle:team:playersList.html.twig' with {'users': team.players} %}
+    </div>
+
+
+    <script type="text/javascript">
+
+        sessionStorage.removeItem('teamId');
+        sessionStorage.setItem('teamId', "{{team.id}}");
+
+        let teamId = "{{team.id}}";
+
+
+        // ajax request coach
+        var url = "{{ path('usersListAjax', {'role': 'ROLE_COACH'})}}";
+        $('#addCoach').keyup(function() {
+            var search = $('#addCoach').val();
+            if(search.length > 0) {
+                $('#searchResult-addCoach').load(url+'/'+search);
+            }
+        })
+
+        $('#button-addPlayer').click(function() {
+            $('#splashModal').toggle();
+            let url = "{{ path('editPlayerForm')}}";
+            $('#splashModalContent').load(url+'/'+teamId+'/ajaxCall');
+        })
+
+
+        $('.fa-plus-square').click(function() {
+            let target = $(this).attr('id').split('-')[1];
+            $('#'+target).toggle();
+        })
+
+
+    </script>
+
+
+{% endblock %}

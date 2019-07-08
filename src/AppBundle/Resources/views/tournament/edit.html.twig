@@ -13,13 +13,19 @@
         </div>
         <br/>
         <div>
-          {{ form_label(form.description)}}
+        <h3 style="text-align: center">{{ form_label(form.sport)}}</h3>
+          {{ form_widget(form.sport)}}
+          {{ form_errors(form.sport)}}
+        </div>
+        <br/>
+        <div>
+        <h3 style="text-align: center">{{ form_label(form.description)}}</h3>
           {{ form_widget(form.description)}}
           {{ form_errors(form.description)}}
         </div>
         <br/>
         <div>
-          <h2 style="text-align: center">{{ form_label(form.dateStart)}}</h2>
+          <h3 style="text-align: center">{{ form_label(form.dateStart)}}</h3>
           {{ form_widget(form.dateStart)}}
           {{ form_errors(form.dateStart)}}
         </div>
@@ -30,14 +36,12 @@
         </div>
         <br/>
         <div>
-            {{ form_label(form.postalCode)}}
             {{ form_widget(form.postalCode)}}
             {{ form_errors(form.postalCode)}}
 
         </div>
         <br/>
         <div>
-            {{ form_label(form.city)}}
             {{ form_widget(form.city)}}
             {{ form_errors(form.city)}}
         </div>
@@ -51,6 +55,6 @@
 
     {{ form_end(form)}}
 
-  
+
 
 {% endblock %}

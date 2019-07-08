@@ -10,6 +10,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * User
  *
+ * // Nb : Architecture User > Person > Player in creation
+ *        in use it can be player > person > user
+ *
  * @ORM\Table(name="lbm_user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -67,6 +70,13 @@ class User extends LbmExtensionEntity implements UserInterface
      * @ORM\JoinTable(name="tournaments_users")
      */
     private $tournaments;
+
+    /**
+     *
+     * @ORM\ManyToMany(targetEntity="Team", mappedBy="users")
+     * @ORM\JoinTable(name="teams_users")
+     */
+    private $teams;
 
     /**
      *
@@ -246,7 +256,7 @@ class User extends LbmExtensionEntity implements UserInterface
     public function setPerson(Person $person)
     {
         $this->person = $person;
-
+        $person->setUser($this);
         return $this;
     }
 
@@ -276,6 +286,49 @@ class User extends LbmExtensionEntity implements UserInterface
     {
         return $this->tournaments;
     }
+
+    public function addTeam(Team $team)
+    {
+        $this->teams[] = $team;
+        return $this;
+    }
+
+    public function getTeams()
+    {
+        return $this->teams;
+    }
+
+    public function toArray()
+    {
+        $objectArray = get_object_vars($this);
+        unset($objectArray['rolesUF']);
+        unset($objectArray['tournaments']);
+        unset($objectArray['password']);
+        unset($objectArray['id']);
+
+        $objectArray['person'] = $this->getPerson()->toArray();
+        $objectArray['user_id'] = $this->getId();
+        $objectArray['role'] = $this->getRoleString();
+
+        if($this->getPerson()->getPlayer())
+        {
+            $objectArray['sport'] = [
+                                                            'name' => $this->getPerson()->getPlayer()->getPosition()->getSport()->getName(),
+                                                            'position' => $this->getPerson()->getPlayer()->getPosition()->getName()
+                                                        ];
+
+        };
+
+        if(  count($this->getTeams()) >0) {
+            foreach($this->getTeams() as $team) {
+                $teamsArr[] = $team->toArray();
+            }
+            $objectArray['teams'][] = $teamsArr;
+        }
+
+        return $objectArray;
+    }
+
 
     public function eraseCredentials()
     {

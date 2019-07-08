@@ -10,6 +10,9 @@ use AppBundle\Entity\Tournament;
 /**
  * Team
  *
+ * // Nb : Architecture User > Person > Player in creation
+ *        in use it can be player > person > user
+ *
  * @ORM\Table(name="team")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TeamRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -60,11 +63,19 @@ class Team extends LbmExtensionEntity
      */
     private $sportClass;
 
-   /**
-    * @var ArrayCollection
-    * @ORM\OneToMany(targetEntity="Player", mappedBy="team", cascade={"persist", "remove"})
+    /**
+     *
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="teams")
+     * @ORM\JoinTable(name="teams_users")
+     */
+    private $users;
+
+    /**
+    * @ORM\ManyToOne(targetEntity="Sport")
+    * @ORM\JoinColumn(name="sport_id", referencedColumnName="id", nullable=true)
     */
-    private $players;
+    private $sport;
+
 
     /**
      *
@@ -78,6 +89,8 @@ class Team extends LbmExtensionEntity
     {
         $this->players = new ArrayCollection();
         $this->tournaments = new ArrayCollection();
+        $this->users = new ArrayCollection();
+
     }
 
     /**
@@ -136,6 +149,17 @@ class Team extends LbmExtensionEntity
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function setSport(Sport $sport)
+    {
+        $this->sport = $sport;
+        return $this;
+    }
+
+    public function getSport()
+    {
+        return $this->sport;
     }
 
     /**
@@ -210,28 +234,42 @@ class Team extends LbmExtensionEntity
         return $this->sportClass;
     }
 
-    /**
-    * Get players
-    *
-    * @return Array
-    */
+    public function addUser($user)
+    {
+        $this->users[] = $user;
+        $user->addTeam($this);
+        return $this;
+    }
+
+    public function removeUser($user)
+    {
+        $this->users->removeElement($user);
+        return $this;
+    }
+
+    public function getUsers($role = null)
+    {
+
+        if($role) {
+            $result = new ArrayCollection();
+            foreach($this->users as $user) {
+                if($user->getRoleString() == $role) $result[] = $user;
+            }
+            return $result;
+        }
+        return $this->users;
+    }
+
+    public function getCoachs()
+    {
+        return $this->getUsers('COACH');
+    }
+
     public function getPlayers()
     {
-       return $this->players;
+        return $this->getUsers('PLAYER');
     }
 
-    public function addPlayer(Player $player)
-    {
-        $this->players[] = $player;
-        $player->setTeam($this);
-        return $this;
-    }
-
-    public function removePlayer(Player $player)
-    {
-        $this->players->removeElement($player);
-        return $this;
-    }
 
     public function addTournament(Tournament $tournament)
     {
@@ -242,5 +280,11 @@ class Team extends LbmExtensionEntity
     public function getTournaments()
     {
         return $this->tournaments;
+    }
+
+    public function toArray()
+    {
+      $objectArray = get_object_vars($this);
+      return $objectArray;
     }
 }
