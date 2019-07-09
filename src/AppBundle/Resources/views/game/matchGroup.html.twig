@@ -37,7 +37,7 @@
                   <li>
                     {{match.teamName('teamA')|raw}} -  {{match.teamName('teamB')|raw}}
 
-                    {% if tournament.isOpen == 1 %}
+                    {% if tournament.isOpen == 1 and tournament.nbMatchLeft != 0 and is_granted('ROLE_MANAGER', 'ROLE_ADMIN') %}
                       <span style="float: right; margin-left: 50px;">
                           <a href="{{ path('showMatch', {id: match.id})}}">
                               <i class="far fa-eye"></i>
@@ -76,6 +76,21 @@
 
       {% endfor %}
   </div>
+
+  <hr/>
+
+  <div style="text-align: center">
+    Il reste {{ tournament.nbMatchLeft}} matchs à jouer
+  </div>
+
+  {% if tournament.isOpen == 1 and tournament.nbMatchLeft == 0 and is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+    <a href="{{ path('finalRoundPrepar', {'tournamentId' : tournament.id})}}">
+      <div class="alert--warning" style="text-align: center">
+        La phase de groupe est finie,<br/>
+        cliquez ici pour passer en phase finale
+      </div>
+    </a>
+  {% endif %}
 
   <script type="text/javascript">
 

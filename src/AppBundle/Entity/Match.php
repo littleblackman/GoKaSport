@@ -276,6 +276,17 @@ class Match extends LbmExtensionEntity
         return $this->getUsers('REFEREE');
     }
 
+    public function getRefereeIdList()
+    {
+      if(!$referees = $this->getReferees()) return null;
+      $arr = [];
+      foreach($referees as $ref)
+      {
+        $arr[$ref->getId()] = $ref->getId();
+      }
+      return $arr;
+    }
+
     /**
      * Get timeEnd
      *

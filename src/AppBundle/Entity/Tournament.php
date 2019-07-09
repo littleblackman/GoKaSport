@@ -579,4 +579,21 @@ class Tournament extends LbmExtensionEntity
     {
         return $this->getGameOptions()->getMatchPerGroup();
     }
+
+    /**
+     * Return the number of match left
+     * @return int
+     */
+    public function nbMatchLeft() {
+        $total = 0; $totalEnd = 0;
+        foreach($this->getGroups() as $group)
+        {
+          $total += count($group->getMatchs());
+          foreach($group->getMatchs() as $match)
+          {
+              if($match->getStatus() == "END") $totalEnd ++;
+          }
+        }
+        return $total - $totalEnd;
+    }
 }

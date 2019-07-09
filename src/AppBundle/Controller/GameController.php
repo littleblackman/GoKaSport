@@ -92,4 +92,15 @@ class GameController extends Controller
         return $this->render('AppBundle:game:matchGroup.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager]);
     }
 
+    /**
+     * @Route("/passer-en-phase-finale/{tournamentId}", name="finalRoundPrepar")
+     */
+    public function finalRoundPrepar(Request $request, $tournamentId)
+    {
+
+        $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
+        $this->gameManager->setTournament($tournament)->resetTournament('groups')->resetTournament('matchs');
+        return $this->render('AppBundle:game:editFinalRound.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager]);
+    }
+
 }

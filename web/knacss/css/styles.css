@@ -154,6 +154,15 @@ select#tournament_sport {width: 100%!important}
 #iconTime { width: 40%; color: blue; font-size: 14px; font-style: italic}
 #timeStart {}
 
+ul#listPerson li { height: 30px;
+                font-size: 1em;
+                border: 1px solid grey; margin-top: 2px;
+                padding-top: 2px; padding-left: 20px
+              }
+li.notActiveReferee { background-color: lightgrey; color: grey}
+li.activeReferee { background-color: white; color: black}
+
+
 /* ranking */
 .rankingValue { width: 25px }
 .ranking { font-size: 10px;}

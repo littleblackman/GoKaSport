@@ -10,6 +10,8 @@
  use AppBundle\Entity\GameOptions;
  use AppBundle\Service\GameManager;
  use AppBundle\Entity\Match;
+ use AppBundle\Entity\User;
+
 
 
  class MatchController extends Controller
@@ -41,6 +43,45 @@
 
         return new JsonResponse( ['timeStart' => $time->format('H:i:s')]);
     }
+
+    /**
+     * @Route("/add-referre-match/{match_id}/{user_id}", name="addRefereeMatch")
+     */
+    public function addRefereeMatch(Request $request, $match_id = null, $user_id = null)
+    {
+
+
+        $em = $this->getDoctrine()->getManager();
+        $match = $em->getRepository(Match::class)->find($match_id);
+        $user = $em->getRepository(User::class)->find($user_id);
+
+        $match->addUser($user);
+        $em->persist($match);
+        $em->flush();
+
+        return new JsonResponse( ['referee' => $user->toArray()]);
+    }
+
+    /**
+     * @Route("/remove-referre-match/{match_id}/{user_id}", name="removeRefereeMatch")
+     */
+    public function removeRefereeMatch(Request $request, $match_id = null, $user_id = null)
+    {
+
+
+        $em = $this->getDoctrine()->getManager();
+        $match = $em->getRepository(Match::class)->find($match_id);
+        $user = $em->getRepository(User::class)->find($user_id);
+
+        $match->removeUser($user);
+        $em->persist($match);
+        $em->flush();
+
+        return new JsonResponse( ['referee' => $user->toArray()]);
+    }
+
+
+
 
     /**
      * @Route("/fin-de-match", name="endMatch")

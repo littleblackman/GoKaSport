@@ -1,28 +1,49 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% set displayStartButton = "display: none" %}
 
-<h1 class="matchH1">
-    <span class="blueTitle">{{ match.teamA.name }}</span><br/>
-    &nbsp;vs&nbsp;<br/>
-    <span class="blueTitle">{{ match.teamB.name }}</span>
-</h1>
+    <h1 class="matchH1">
+        <span class="blueTitle">{{ match.teamA.name }}</span><br/>
+        &nbsp;vs&nbsp;<br/>
+        <span class="blueTitle">{{ match.teamB.name }}</span>
+    </h1>
 
-
-    {% if match.referees is empty %}
-            {{ dump(match.tournament.referees)}}
-            il y a pas
-    {% else  %}
-            <h2>Arbitre.s</h2>
-            <ul>
+    <div id="refereeList">
+        <h3>Arbitre.s</h3>
+        {% if match.status == "END" %}
+                <ul style="columns: 2;">
                 {% for referee in match.referees %}
-                    <li>{{ referee.person.fullname }}</li>
+                    <li>{{ referee.person.fullname}}</li>
                 {% endfor %}
-            </ul>
-    {% endif %}
-    <button class="btn--primary fullWidth" id="startButton" style="cursor: pointer">
-        Démarrer le match
-    </button>
+                <ul>
+        {% else %}
+                {% if match.referees is empty %}
+                        <div class="alert--warning" style="padding: 20px; font-size: 1.2em">
+                            Il y a pas d'arbitre sur votre match,<br/>Ajoutez en pour démarrer.
+                        </div>
+                {% endif %}
+                <ul id="listPerson">
+                    {% for referee in match.group.tournament.referees %}
+                        {% if referee.id in match.refereeIdList %}
+                            {% set displayStartButton = "display: block" %}
+                            <li id="refereeId-{{ referee.id}}" class="refereeName activeReferee">
+                                {{ referee.person.fullname}}
+                            </li>
+                        {% else %}
+                            <li id="refereeId-{{ referee.id}}" class="refereeName notActiveReferee">
+                                {{ referee.person.fullname}}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+        {% endif %}
+
+        <button class="btn--primary fullWidth" id="startButton" style="cursor: pointer; {{ displayStartButton }}">
+            Démarrer le match
+        </button>
+    </div>
+
 
     <div id="boardMatch" class="clearfix" style="display:none">
         <div id="time" style="width: 20%" class="fl">
@@ -79,6 +100,45 @@
 
     <script type="text/javascript">
 
+        $('.refereeName').click(function(){
+            let user_id = $(this).attr('id').split('-')[1];
+            let match_id = "{{ match.id}}";
+            let urlAddReferee = "{{ path('addRefereeMatch')}}";
+            let urlRemReferee = "{{ path('removeRefereeMatch')}}";
+
+            urlAddReferee = urlAddReferee+'/'+match_id+'/'+user_id;
+            urlRemReferee = urlRemReferee+'/'+match_id+'/'+user_id;
+
+            if(  $(this).hasClass('notActiveReferee')) {
+                $.ajax({
+                   url : urlAddReferee,
+                   type : 'GET',
+                   dataType : 'json',
+                   success : function(data, statut){
+                       let user_id = data['referee']['user_id'];
+                       $('#refereeId-'+user_id).removeClass('notActiveReferee');
+                       $('#refereeId-'+user_id).addClass('activeReferee');
+                       $('#startButton').show();
+                   }
+                 })
+            } else {
+                $.ajax({
+                   url : urlRemReferee,
+                   type : 'GET',
+                   dataType : 'json',
+                   success : function(data, statut){
+                       let user_id = data['referee']['user_id'];
+                       $('#refereeId-'+user_id).removeClass('activeReferee');
+                       $('#refereeId-'+user_id).addClass('notActiveReferee');
+                   }
+                 })
+            }
+
+
+
+
+        })
+
         var mStatus = "{{ match.status}}";
 
         if(mStatus == 'END')
@@ -115,6 +175,7 @@
                       $('#startButton').hide();
                       $('#pauseButton').show();
                       $('#endButton').show();
+                      $('#refereeList').hide();
 
                       // set time
                       sessionStorage.setItem('timeStart', data.timeStart);

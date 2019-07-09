@@ -24,7 +24,7 @@ class TournamentController extends Controller
 
     public function __construct(TokenStorageInterface $tokenStorage)
     {
-            $this->currentUser = $tokenStorage->getToken()->getUser();
+        $this->currentUser = $tokenStorage->getToken()->getUser();
     }
 
 
@@ -37,8 +37,13 @@ class TournamentController extends Controller
         $manager = $this->getDoctrine()->getManager();
 
         $opens  = $manager->getRepository(Tournament::class)->findIsOpen();
-        $owners = $manager->getRepository(Tournament::class)->findByCreatedBy($this->currentUser);
-        $associates = $manager->getRepository(Tournament::class)->findAssociated($this->currentUser->getId());
+        if($this->container->get('security.authorization_checker')->isGranted(['ROLE_ADMIN', 'ROLE_MANAGER'])) {
+            $owners = $manager->getRepository(Tournament::class)->findByCreatedBy($this->currentUser);
+            $associates = $manager->getRepository(Tournament::class)->findAssociated($this->currentUser->getId());
+        } else {
+            $owners = null; $associates = null;
+        }
+
 
         return $this->render('AppBundle:tournament:list.html.twig', ['opens' => $opens, 'owners' => $owners, 'associates' => $associates]);
     }
@@ -78,7 +83,6 @@ class TournamentController extends Controller
             return $this->redirectToRoute('showTournament', ['id' => $tournament->getId()]);
 
         }
-        // l'objet est renvoyé avec son contenu (widget, label, errors => Type)
         return $this->render('AppBundle:tournament:edit.html.twig', ['form' => $form->createView(), 'mode' => $mode, 'tournamentId' => $id]);
     }
 
