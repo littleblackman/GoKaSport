@@ -83,6 +83,18 @@ class GameController extends Controller
     }
 
     /**
+     * @Route("/simuler-le-tournoi/{tournamentId}", name="simulateTournament")
+     */
+    public function simulateTournament(Request $request, $tournamentId, GameManager $gameManager)
+    {
+
+        $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
+        $gameManager->setTournament($tournament)->simulateTournament();
+        return $this->redirectToRoute('showMatchGroup', ['tournamentId' => $tournamentId]);
+    }
+
+
+    /**
      * @Route("/voir-les-matchs/{tournamentId}", name="showMatchGroup")
      */
     public function showMatchGroup(Request $request, GameManager $gameManager, $tournamentId)
@@ -95,12 +107,47 @@ class GameController extends Controller
     /**
      * @Route("/passer-en-phase-finale/{tournamentId}", name="finalRoundPrepar")
      */
-    public function finalRoundPrepar(Request $request, $tournamentId)
+    public function finalRoundPrepar(Request $request, GameManager $gameManager, $tournamentId)
     {
 
         $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
-        $this->gameManager->setTournament($tournament)->resetTournament('groups')->resetTournament('matchs');
-        return $this->render('AppBundle:game:editFinalRound.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager]);
+        $val = 2;
+        while($val <= $tournament->countNbTeams() ) {
+          $maxTeamFinalRoundOption[] = $val;
+          $val = $val*2;
+        }
+        return $this->render('AppBundle:game:editFinalRound.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager, 'maxTeamFinalRoundOption' => $maxTeamFinalRoundOption]);
     }
+
+    /**
+     * @Route("/initier-phase-finale", name="initFinalRound")
+     */
+    public function initFinalRound(Request $request, GameManager $gameManager)
+    {
+        $tournamentId = $request->get('tournamentId');
+        $totalTeams = $request->get('totalTeams');
+
+        $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
+
+        if($tournament->getCompetitionType() != "FINAL-ROUND") {
+          $gameManager->setTournament($tournament)->initFinalRound($totalTeams);
+        }
+
+        return $this->redirectToRoute('showMatchFinalRound', ['tournamentId' => $tournamentId]);
+
+    }
+
+    /**
+     * @Route("/voir-les-matchs-phase-finale/{tournamentId}", name="showMatchFinalRound")
+     */
+    public function showMatchFinalRound(Request $request, GameManager $gameManager, $tournamentId)
+    {
+        $tournament = $this->getDoctrine()->getManager()->getRepository(Tournament::class)->find($tournamentId);
+        $gameManager->setTournament($tournament);
+        return $this->render('AppBundle:game:finalRound.html.twig', ['tournament' => $tournament,'gameManager' => $gameManager]);
+    }
+
+
+
 
 }

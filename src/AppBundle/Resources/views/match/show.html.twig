@@ -24,7 +24,7 @@
                         </div>
                 {% endif %}
                 <ul id="listPerson">
-                    {% for referee in match.group.tournament.referees %}
+                    {% for referee in match.tournament.referees %}
                         {% if referee.id in match.refereeIdList %}
                             {% set displayStartButton = "display: block" %}
                             <li id="refereeId-{{ referee.id}}" class="refereeName activeReferee">

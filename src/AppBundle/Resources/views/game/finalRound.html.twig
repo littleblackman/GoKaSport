@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h1>
+  {{ tournament.name }}<br/>
+  <span style="font-weight: normal; font-size: 0.7em; font-style: italic">Tableau final</span>
+</h1>
+
+
+<div id="finalRound">
+
+  {% for round in tournament.finalRounds %}
+
+      <div id="round-{{round.step}}" class="stepContent">
+        <br/>
+        <h2 style="font-size: 1.3em">{{ round.name|capitalize}}</h2>
+
+        {% if round.step == 0 and (round.tournament.winner is not null) %}
+            <div class="matchFinalRound">
+              <h1>{{ round.tournament.winner.name}}</h1>
+            </div>
+
+        {% else %}
+
+
+              {% for match in round.matchs %}
+
+                  <div class="matchFinalRound">
+
+                    <ul>
+                      <a href="{{ path('showMatch', {id: match.id})}}">
+                        <i class="far fa-eye"></i>
+                      </a>
+                      <li>
+                        {{ match.teamNameA|raw }}
+                        <div class="point">
+                          {{ match.pointA }}
+                        </div>
+                      </li>
+                      <li>
+                        {{ match.teamNameB|raw }}
+                        <div class="point">
+                          {{ match.pointB }}
+                        </div>
+                      </li>
+
+                    </ul>
+
+                  </div>
+
+              {% endfor %}
+          {% endif %}
+
+      </div>
+
+  {% endfor %}
+
+
+
+
+
+</div>
+
+{% endblock %}

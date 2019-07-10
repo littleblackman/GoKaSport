@@ -109,9 +109,16 @@
         $em->flush();
 
         $gameManager->updateRankingMatch($match);
-        $tournamentId = $match->getGroup()->getTournament()->getId();
 
-        return $this->redirectToroute('showMatchGroup', ['tournamentId' => $tournamentId]);
+        if($match->getGroup()) {
+          $tournamentId = $match->getGroup()->getTournament()->getId();
+          return $this->redirectToroute('showMatchGroup', ['tournamentId' => $tournamentId]);
+        } else {
+         $gameManager->updateFinalRoundMatch($match);
+          $tournamentId = $match->getTournament()->getId();
+          return $this->redirectToroute('showMatchFinalRound', ['tournamentId' => $tournamentId]);
+        }
+
 
     }
 

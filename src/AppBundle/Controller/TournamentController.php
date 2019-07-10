@@ -37,15 +37,20 @@ class TournamentController extends Controller
         $manager = $this->getDoctrine()->getManager();
 
         $opens  = $manager->getRepository(Tournament::class)->findIsOpen();
-        if($this->container->get('security.authorization_checker')->isGranted(['ROLE_ADMIN', 'ROLE_MANAGER'])) {
+        if($this->container->get('security.authorization_checker')->isGranted(['ROLE_MANAGER'])) {
             $owners = $manager->getRepository(Tournament::class)->findByCreatedBy($this->currentUser);
             $associates = $manager->getRepository(Tournament::class)->findAssociated($this->currentUser->getId());
         } else {
-            $owners = null; $associates = null;
+          $owners = null; $associates = null;
+          $alls = null;
+        }
+
+        if($this->container->get('security.authorization_checker')->isGranted(['ROLE_ADMIN'])) {
+            $alls = $manager->getRepository(Tournament::class)->findBy(['isActive' => 1, 'isArchived' => 0]);
         }
 
 
-        return $this->render('AppBundle:tournament:list.html.twig', ['opens' => $opens, 'owners' => $owners, 'associates' => $associates]);
+        return $this->render('AppBundle:tournament:list.html.twig', ['opens' => $opens, 'owners' => $owners, 'associates' => $associates, 'alls' => $alls]);
     }
 
     /**

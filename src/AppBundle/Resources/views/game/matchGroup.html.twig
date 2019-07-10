@@ -37,16 +37,17 @@
                   <li>
                     {{match.teamName('teamA')|raw}} -  {{match.teamName('teamB')|raw}}
 
-                    {% if tournament.isOpen == 1 and tournament.nbMatchLeft != 0 and is_granted('ROLE_MANAGER', 'ROLE_ADMIN') %}
+                    {% if tournament.isOpen == 1 and tournament.nbMatchLeft != 0 and is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
                       <span style="float: right; margin-left: 50px;">
                           <a href="{{ path('showMatch', {id: match.id})}}">
                               <i class="far fa-eye"></i>
                           </a>
                       </span>
-                      <span style="float: right">
-                          {{ match.score }}
-                      </span>
                     {% endif %}
+                    <span style="float: right">
+                        {{ match.score }}
+                    </span>
+
 
                   </li>
                 {% endfor %}
@@ -82,6 +83,14 @@
   <div style="text-align: center">
     Il reste {{ tournament.nbMatchLeft}} matchs à jouer
   </div>
+
+  {% if is_granted('ROLE_ADMIN') and tournament.nbMatchLeft != 0 %}
+    <a href="{{ path('simulateTournament', {'tournamentId' : tournament.id})}}">
+      <div class="alert--info" style="text-align: center">
+        SIMULER LE TOURNOI
+      </div>
+    </a>
+  {% endif %}
 
   {% if tournament.isOpen == 1 and tournament.nbMatchLeft == 0 and is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
     <a href="{{ path('finalRoundPrepar', {'tournamentId' : tournament.id})}}">

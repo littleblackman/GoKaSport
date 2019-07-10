@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<p style="font-size: 1.2em">
+  Welcome !
+  <br/>
+  Vous avez {{ tournament.countNbTeams }} équipes participantes.<br/>
+  <br/>
+  Vous pouvez créer la phase finale de votre tournoi<br/>
+  <br/>
+</p>
+<br/>
+<form  action="{{ path('initFinalRound')}}" method="post" >
+
+    <input type="hidden" value="{{tournament.id}}" name="tournamentId"/>
+
+    <p id="finalRoundOptions" class="typeSelectOptions" style="font-size: 1.2em;">
+      Nombre d'équipe qualifiées&nbsp;&nbsp;&nbsp;
+      <select name="totalTeams">
+        {% for val in maxTeamFinalRoundOption %}
+          <option value="{{val}}" >
+            {{ val }}
+          </option>
+        {% endfor %}
+      </select>
+    </p>
+    <br/><br/>
+
+
+    <br/>
+    <input style="height: 80px; font-size: 2em" type="submit" class="btn--primary fullWidth" value="Valider"/>
+
+</form>
+<br/><br/>
+
+<br/>
+<p class="alert">
+La répartition se fera de manière alétoire avec un système de tête de série.
+</p>
+<br/>
+<p class="alert">
+Le même nombre d'équipe par groupe est sélectionné. Dans la mesure du possible.
+</p>
+<br/>
+
+
+{% endblock %}

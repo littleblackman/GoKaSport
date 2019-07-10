@@ -162,6 +162,13 @@ ul#listPerson li { height: 30px;
 li.notActiveReferee { background-color: lightgrey; color: grey}
 li.activeReferee { background-color: white; color: black}
 
+/*** FINAL ROUND ****/
+#finalRound { }
+.stepContent { min-width: 300px;}
+.matchFinalRound ul { width: 80%; margin: 20px auto; }
+.matchFinalRound li { border: 1px solid black; height: 50px; font-size: 1.3em; text-align: left; padding: 10px}
+.point { width: 30px; float: right; font-size: 1.8em, font-weight: bold; color: #f5fec0; }
+
 
 /* ranking */
 .rankingValue { width: 25px }

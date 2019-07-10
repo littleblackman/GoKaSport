@@ -135,6 +135,7 @@ class Tournament extends LbmExtensionEntity
     /**
     * @var ArrayCollection
     * @ORM\OneToMany(targetEntity="TournamentFinalRound", mappedBy="tournament", cascade={"persist", "remove"}))
+    * @ORM\OrderBy({"step" = "DESC"})
     */
     private $finalRounds;
 
@@ -157,6 +158,12 @@ class Tournament extends LbmExtensionEntity
      * @ORM\JoinTable(name="tournaments_users")
      */
     private $users;
+
+    /**
+    * @ORM\ManyToOne(targetEntity="Team")
+    * @ORM\JoinColumn(name="winner_id", referencedColumnName="id")
+    */
+    private $winner;
 
 
     public function __construct()
@@ -574,6 +581,34 @@ class Tournament extends LbmExtensionEntity
     {
         return $this->gameOptions;
     }
+
+    /**
+     * Set winner
+     *
+     * @param Team $team
+     *
+     * @return Tournament
+     */
+    public function setWinner($team)
+    {
+        $this->winner = $team;
+
+        return $this;
+    }
+
+    /**
+     * Get winner
+     *
+     * @return Team
+     */
+    public function getWinner()
+    {
+        return $this->winner;
+    }
+
+
+
+
 
     public function getMatchPerGroup()
     {

@@ -151,10 +151,21 @@ class Match extends LbmExtensionEntity
         return $this->teamB;
     }
 
+    public function getTeamNameA()
+    {
+        return $this->getTeamName('teamA');
+    }
+
+    public function getTeamNameB()
+    {
+        return $this->getTeamName('teamB');
+    }
+
     public function getTeamName($team)
     {
-        if($team == 'teamA') $name = $this->getTeamA()->getName();
-        if($team == 'teamB') $name = $this->getTeamB()->getName();
+        $name = null;
+        if($team == 'teamA' && $this->getTeamA()) $name = $this->getTeamA()->getName();
+        if($team == 'teamB' && $this->getTeamB()) $name = $this->getTeamB()->getName();
         if($team == $this->getWinner()) {
           $name = "<span class='winner'>".$name.'</span>';
         }
@@ -169,7 +180,7 @@ class Match extends LbmExtensionEntity
 
     public function getFinalRound()
     {
-        return $this->finalRound();
+        return $this->finalRound;
     }
 
     public function setGroup(TournamentGroup $group)
@@ -181,6 +192,13 @@ class Match extends LbmExtensionEntity
     public function getGroup()
     {
         return $this->group;
+    }
+
+    public function getTournament()
+    {
+        if( $this->getGroup() ) return $this->getGroup()->getTournament();
+        if( $this->getFinalRound() ) return $this->getFinalRound()->getTournament();
+        return null;
     }
 
     /**

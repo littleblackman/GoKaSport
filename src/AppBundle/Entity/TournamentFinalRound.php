@@ -38,6 +38,13 @@ class TournamentFinalRound
     private $step;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="nb_match_by_step", type="integer")
+     */
+    private $nbMatchByStep;
+
+    /**
     * @ORM\ManyToOne(targetEntity="Tournament", inversedBy="finalRounds")
     * @ORM\JoinColumn(name="tournament_id", referencedColumnName="id")
     */
@@ -129,6 +136,32 @@ class TournamentFinalRound
     {
         return $this->status;
     }
+
+
+    /**
+     * Set nbMatchByStep
+     *
+     * @param string $nbMatchByStep
+     *
+     * @return TournamentFinalRound
+     */
+    public function setNbMatchByStep($nb)
+    {
+        $this->nbMatchByStep = $nb;
+
+        return $this;
+    }
+
+    /**
+     * Get nbMatchByStep
+     * @return int
+     */
+    public function getNbMatchByStep()
+    {
+        return $this->nbMatchByStep;
+    }
+
+
 
     public function setTournament(Tournament $tournament)
     {

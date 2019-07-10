@@ -13,8 +13,27 @@ use AppBundle\Entity\TournamentFinalRound;
 class GameManager
 {
 
-  const STEP_NAME = ['', 'Vainqueur', 'finale', 'demi-finale', 'quart de finale', 'huitième de finale', 'seizième de finale'];
+  const STEP_NAME      = ['Vainqueur', 'finale', 'demi-finale', 'quart de finale', 'huitième de finale', 'seizième de finale'];
+  const NB_MATCH_STEP  = [       0   ,     1    ,      2      ,              4   ,                  8  ,              16      ];
+  const POSITION_ORDER = [    null   ,    [11]  ,   [21, 22]  ,  [31, 34, 33, 32],[41, 48, 45, 44, 43, 42, 47, 46],    []     ];
+
+  const NEXT_POSITION  = [   41 => 31, 42 => 31,
+                        43 => 31, 44 => 32,
+                        45 => 31, 46 => 33,
+                        47 => 31, 48 => 34,
+
+                        31 => 21, 32 => 21,
+                        33 => 22, 34 => 22,
+
+                        21 => 11,
+                        22 => 11,
+
+                        11 => 0
+
+                      ];
+
   const POINTS = ['V' => 3, 'N' => 1, 'D' => 0];
+
   /**
    * Tournament
    */
@@ -24,6 +43,8 @@ class GameManager
    * GameOptions object
    */
   private $gameOptions;
+
+  private $em;
 
   public function __construct(EntityManagerInterface $em)
   {
@@ -82,7 +103,7 @@ class GameManager
       if($gameOptionsArray['type'] == 'group') {
           $tournament = $this->createGroupsRound($tournament, $gameOptions);
       } else {
-          /***** CREATE FIRST-ROUND *****/
+          /***** CREATE FINAL-ROUND *****/
           $tournament = $this->createFinalRoundMatch($tournament, $gameOptions);
       }
 
@@ -95,42 +116,162 @@ class GameManager
   }
 
   /**
-   * Create final round match
+   * init final round after group round
+   *
+   * @return Tournament
+   */
+  public function initFinalRound($totalTeams)
+  {
+      $tournament = $this->tournament;
+      $nbMatchs = $totalTeams/2;
+
+      $nbStepRoundFinal = array_search($nbMatchs, self::NB_MATCH_STEP);
+
+      $em = $this->em;
+      // create games options
+      $gameOptions = $tournament->getGameOptions();
+      $gameOptions->setNbStepRoundFinal($nbStepRoundFinal);
+      $gameOptions->setNbTeamsRoundFinal($totalTeams);
+      $gameOptions->setNbTeamsSelectedByGroups($totalTeams/$gameOptions->getNbGroupsFirstRound());
+      $em->persist($tournament);
+      $em->persist($gameOptions);
+      $em->flush();
+
+      // create step of final round
+      $tournament = $this->createFinalRoundStep($tournament);
+
+      // create all match by round
+      $tournament = $this->createFinalRoundMatch($tournament);
+
+      // dispatch all teams on latest step
+      $tournament = $this->finalRoundDispatchTeams($tournament);
+
+      $tournament->setCompetitionType('FINAL-ROUND');
+      $em->persist($tournament);
+      $em->flush();
+
+  }
+
+  /**
+   * Create final round step
    * @param Tournament
    * @param GameOptions
    * @return Tournament
    */
-  private function createFinalRoundMatch(Tournament $tournament, GameOptions $gameOptions) {
-    // create final round & final empty matches
-    $diviseur = 1;
-    for($k = $gameOptions->getNbStepRoundFinal(); $k > 0; $k--)
-    {
-        $diviseur = $diviseur * 2;
+  private function createFinalRoundStep(Tournament $tournament) {
 
+    $gameOptions = $tournament->getGameOptions();
+
+    $em = $this->em;
+    for($k = $gameOptions->getNbStepRoundFinal(); $k >= 0; $k--)
+    {
         $finalRound = new TournamentFinalRound();
         $finalRound->setStep($k);
         $finalRound->setName(self::STEP_NAME[$k]);
+        $finalRound->setNbMatchByStep(self::NB_MATCH_STEP[$k]);
 
         // add the final round
         $tournament->addFinalRound($finalRound);
 
-        for($m = 1; $m <= $gameOptions->getNbTeamsRoundFinal()/$diviseur; $m++)
-        {
-            $match = new Match();
-            $match->setStatus('EMPTY');
-            $match->setPosition($m);
-            $em->persist($match);
-
-            // add match to final round
-            $finalRound->addMatch($match);
-        }
-        $tournament->setCompetitionType('FINAL-ROUND');
         $em->persist($finalRound);
         $em->persist($tournament);
     }
     $em->flush();
     return $tournament;
   }
+
+  /**
+   * Create final round match
+   * @param Tournament
+   * @return Tournament
+   */
+  private function createFinalRoundMatch(Tournament $tournament) {
+
+    $em = $this->em;
+
+    foreach($tournament->getFinalRounds() as $round)
+    {
+      $nb_match = $round->getNbMatchByStep();
+      for($i = 1; $i <= $nb_match; $i++) {
+          $match = new Match();
+          $match->setPosition($round->getStep().$i);
+          $match->setStatus('EMPTY');
+          $round->addMatch($match);
+          $em->persist($match);
+      }
+      $em->persist($round);
+    }
+
+    $em->flush();
+    return $tournament;
+  }
+
+
+  /**
+   * dispatch teams for first step of final round
+   * @param Tournament
+   * @return Tournament
+   */
+  private function finalRoundDispatchTeams(Tournament $tournament)
+  {
+      $gameOptions = $tournament->getGameOptions();
+
+      // nbteamBygroups
+      $NbTeamsSelectedByGroup = $gameOptions->getNbTeamsSelectedByGroups();
+      // order teams
+      $i = 0;
+      for($i = 0; $i < $NbTeamsSelectedByGroup; $i++) {
+        foreach($tournament->getGroups() as $group)
+        {
+            $rankings = $group->getRankings();
+            $currentRank = $rankings[$i];
+            $teamSelecteds[] = $currentRank->getTeam();
+        }
+      }
+      // get last round
+      $round = $tournament->getFinalRounds()[0];
+
+      // step played
+      $step  = $round->getStep();
+      $positionOrders = self::POSITION_ORDER[$step];
+
+      // create teams head series
+      foreach($positionOrders as $key => $position) {
+        $match = $this->em->getRepository(Match::class)->findOneBy(['finalRound' => $round, 'position' => $position]);
+        $matchs[] = $match;
+        $match->setTeamA($teamSelecteds[$key]);
+        $match->setStatus('TO_UPDATE');
+        $this->em->persist($match);
+        unset($teamSelecteds[$key]);
+      }
+
+      // add other match no head series
+      foreach($matchs as $match)
+      {
+        sort($teamSelecteds);
+        if($match->getStatus() == "TO_UPDATE") {
+          $key = rand(0, count($teamSelecteds)-1);
+          $match->setTeamB($teamSelecteds[$key]);
+          $match->setStatus('READY');
+          $this->em->persist($match);
+          unset($teamSelecteds[$key]);
+        }
+
+      }
+
+      $this->em->flush();
+
+      return $tournament;
+
+      /*
+        delete from match_game WHERE final_round_id is not null;
+        delete from tournament_final_round;
+      */
+
+  }
+
+
+
 
   /**
    * Create groups for tournament (no matchs created)
@@ -237,6 +378,56 @@ class GameManager
   }
 
   /**
+   * update the match on over step
+   * @param currentMatch
+   * @return match
+   */
+  public function updateFinalRoundMatch($currentMatch)
+  {
+      $currentRound = $currentMatch->getFinalRound();
+      $nextStep     = $currentRound->getStep()-1;
+      if($nextStep == 0) {
+        $this->gameOver($currentMatch);
+        return $currentMatch;
+      }
+      $tournament   = $currentMatch->getTournament();
+
+      $position     = $currentMatch->getPosition();
+      $winner       = $currentMatch->getWinnerTeam();
+
+      $nextRound = $this->em->getRepository(TournamentFinalRound::class)->findOneBy(['tournament' => $tournament, 'step' => $nextStep]);
+      $nextPosition = self::NEXT_POSITION[$position];
+
+
+      $nextMatch = $this->em->getRepository(Match::class)->findOneBy(['finalRound' => $nextRound, 'position' => $nextPosition]);
+      if($nextMatch->getStatus() == "EMPTY") {
+        $nextMatch->setTeamA($winner);
+        $nextMatch->setStatus('TO_UPDATE');
+
+      } else {
+        $nextMatch->setTeamB($winner);
+        $nextMatch->setStatus('READY');
+      }
+      $this->em->persist($nextMatch);
+      $this->em->flush();
+
+      return $currentMatch;
+
+  }
+
+  public function gameOver($match)
+  {
+    $tournament = $match->getTournament();
+    $tournament->setWinner($match->getWinnerTeam());
+    $this->em->persist($tournament);
+    $this->em->flush();
+
+    return true;
+  }
+
+
+
+  /**
    * valide group and create group
    *
    */
@@ -285,6 +476,7 @@ class GameManager
                           $match->setTeamA($teamA);
                           $match->setTeamB($teamB);
                           $match->setPosition($numbers[$k]);
+                          $match->setStatus('READY');
                           $em->persist($match);
 
                           $group->addMatch($match);
@@ -314,8 +506,8 @@ class GameManager
   public function updateRankingMatch(Match $match)
   {
       $em = $this->em;
-      $group = $match->getGroup();
-      $tournament = $group->getTournament();
+      if(!$group = $match->getGroup()) $group = null;
+      $tournament = $match->getTournament();
 
       // team A
       if(!$rankingA = $em->getRepository(TournamentRanking::class)->findOneBy(['team' => $match->getTeamA(), 'tournament' => $tournament]))
@@ -324,7 +516,7 @@ class GameManager
       }
 
       $rankingA->setTeam($match->getTeamA());
-      $rankingA->setGroup($group);
+      if($group) $rankingA->setGroup($group);
       $rankingA->setTournament($tournament);
 
       $rankingA->setMJ($rankingA->getMJ()+1);
@@ -354,7 +546,7 @@ class GameManager
       }
 
       $rankingB->setTeam($match->getTeamB());
-      $rankingB->setGroup($group);
+      if($group) $rankingB->setGroup($group);
       $rankingB->setTournament($tournament);
 
       $rankingB->setMJ($rankingB->getMJ()+1);
@@ -466,6 +658,42 @@ class GameManager
 
   }
 
+  public function simulateTournament()
+  {
+      $tournament = $this->tournament;
+      $em = $this->em;
+      foreach($tournament->getGroups() as $group)
+      {
+        foreach($group->getMatchs() as $match)
+        {
 
+            if($match->getStatus() != "END") {
+                $time = new \DateTime( date('H:i:s'));
+                $scoreA = rand(0, 3);
+                $scoreB = rand(0,3);
+                $winner = "none";
+                if($scoreA > $scoreB) {
+                  $winner = "teamA";
+                }
+                if($scoreB > $scoreA) {
+                  $winner = "teamB";
+                }
+
+                $match->setWinner($winner);
+                $match->setStatus('END');
+                $match->setTimeEnd($time);
+                $match->setPointA($scoreA);
+                $match->setPointB($scoreB);
+
+                $em->persist($match);
+                $em->flush();
+
+                $this->updateRankingMatch($match);
+
+            }
+
+        }
+      }
+  }
 
 }
