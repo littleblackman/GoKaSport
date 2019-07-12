@@ -101,6 +101,13 @@ class Match extends LbmExtensionEntity
     public $winner;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="type_match", type="string", length=20, nullable=true)
+     */
+    public $typeMatch;
+
+    /**
      *
      * @ORM\ManyToMany(targetEntity="User", inversedBy="matchs")
      * @ORM\JoinTable(name="matchs_users")
@@ -264,6 +271,25 @@ class Match extends LbmExtensionEntity
         return $this;
     }
 
+    public function setTypeMatch($typeMatch)
+    {
+        $this->typeMatch = $typeMatch;
+        return $this;
+    }
+
+    public function getTypeMatch()
+    {
+        return $this->typeMatch;
+    }
+
+    public function getTypeMatchString()
+    {
+      if($this->getTypeMatch() == "A") return "aller";
+      if($this->getTypeMatch() == "R") return "retour";
+      return null;
+
+    }
+
     public function addUser($user)
     {
         $this->users[] = $user;
@@ -410,6 +436,8 @@ class Match extends LbmExtensionEntity
     {
         return $this->winner;
     }
+
+
 
     /**
      * Get winner

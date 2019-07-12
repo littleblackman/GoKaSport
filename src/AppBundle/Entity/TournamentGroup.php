@@ -63,7 +63,7 @@ class TournamentGroup
     /**
     * @var ArrayCollection
     * @ORM\OneToMany(targetEntity="Match", mappedBy="group", cascade={"persist", "remove"}))
-    * @ORM\OrderBy({"position" = "ASC"})
+    * @ORM\OrderBy({"typeMatch" = "ASC", "position" = "ASC"})
     */
     private $matchs;
 

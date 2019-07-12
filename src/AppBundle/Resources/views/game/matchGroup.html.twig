@@ -2,6 +2,8 @@
 
 {% block body %}
 
+{% set currentTypeMatch = "" %}
+
 <h1>
   {% if tournament.competitionType == 'FINAL-ROUND' %}
     <a href="{{ path('showMatchFinalRound', {'tournamentId' : tournament.id})}}" style="float: left" title="voir phase finale">
@@ -13,8 +15,6 @@
   {% endif %}
   {{ tournament.name }}
 </h1>
-
-
 
 <div class="tabs js-tabs">
   <nav class="tabs-menu">
@@ -51,6 +51,12 @@
           <div class="teamsGroup">
               <ul>
                 {% for match in group.matchs %}
+                  {% if tournament.gameOptions.hasReturnMatch == 1 %}
+                        {% if match.typeMatch != currentTypeMatch %}
+                          <h4 style="color: white; font-size: 1em">{{ match.typeMatchString|capitalize }}</h4>
+                          {% set currentTypeMatch = match.typeMatch %}
+                        {% endif %}
+                  {% endif %}
                   <li>
                     {{match.teamName('teamA')|raw}} -  {{match.teamName('teamB')|raw}}
 

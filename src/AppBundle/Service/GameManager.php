@@ -90,6 +90,7 @@ class GameManager
       $gameOptions = new GameOptions();
       if($gameOptionsArray['type'] == 'group') {
         $gameOptions->setNbGroupsFirstRound($gameOptionsArray['nbGroups']);
+        $gameOptions->setHasReturnMatch($gameOptionsArray['hasReturnMatch']);
       } else {
         $gameOptions->setNbStepRoundFinal($gameOptionsArray['nbFinalRound']*2);
       }
@@ -291,6 +292,7 @@ class GameManager
           $em->persist($group);
           $em->persist($tournament);
       }
+
       $em->flush();
       return $tournament;
   }
@@ -447,46 +449,63 @@ class GameManager
   {
       $em = $this->em;
       $groups = $this->tournament->getGroups();
-      $matchCreated = [];
 
-      // check group by group
-      foreach($groups as $group)
+      if( $this->tournament->getGameOptions()->getHasReturnMatch() == 1 ) {
+        $typeMatchArray = ['A', 'R'];
+      } else {
+        $typeMatchArray = ['A'];
+      }
+
+      // create AR match
+      foreach($typeMatchArray as $typeMatch)
       {
-            // create match team by team
-            $teams = $group->getTeams();
-            $totalMatchs = count($teams)*(count($teams)-1);
-            $numbers = range(1, $totalMatchs);
-            shuffle($numbers);
-            $k = 1;
-            foreach($teams as $teamA)
-            {
-                foreach($teams as $teamB) {
+          $matchCreated = []; // to preserve from double match
 
-                    if( !key_exists($teamA->getId().$teamB->getId(), $matchCreated)
-                        && !key_exists($teamB->getId().$teamA->getId(), $matchCreated)
-                        && $teamA->getId() != $teamB->getId()) {
+          // check group by group
+          foreach($groups as $group)
+          {
+                // create match team by team
+                $teams = $group->getTeams();
+                $totalMatchs = count($teams)*(count($teams)-1);
+                $numbers = range(1, $totalMatchs);
+                shuffle($numbers);
+                $k = 1;
+                foreach($teams as $teamA)
+                {
+                    foreach($teams as $teamB) {
 
-                          $match = new Match();
-                          $match->setTeamA($teamA);
-                          $match->setTeamB($teamB);
-                          $match->setPosition($numbers[$k]);
-                          $match->setStatus('READY');
-                          $em->persist($match);
+                        if( !key_exists($teamA->getId().$teamB->getId(), $matchCreated)
+                            && !key_exists($teamB->getId().$teamA->getId(), $matchCreated)
+                            && $teamA->getId() != $teamB->getId()) {
 
-                          $group->addMatch($match);
+                              $match = new Match();
 
-                          $matchCreated[$teamA->getId().$teamB->getId()] = 1;
+                              if($typeMatch == "A") {
+                                $match->setTeamA($teamA);
+                                $match->setTeamB($teamB);
+                              } else {
+                                $match->setTeamA($teamB);
+                                $match->setTeamB($teamA);
+                              }
+                              $match->setPosition($numbers[$k]);
+                              $match->setStatus('READY');
+                              $match->setTypeMatch($typeMatch);
+                              $em->persist($match);
 
-                          $k++;
+                              $group->addMatch($match);
+
+                              $matchCreated[$teamA->getId().$teamB->getId()] = 1;
+
+                              $k++;
+                        }
+
                     }
 
                 }
 
-            }
+                $em->persist($group);
 
-            $em->persist($group);
-
-
+          }
       }
 
       $em->flush();
