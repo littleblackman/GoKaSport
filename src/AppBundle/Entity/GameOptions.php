@@ -56,6 +56,13 @@ class GameOptions
      */
     private $nbTeamsSelectedByGroups;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="hasReturnMatch", type="boolean", nullable=true)
+     */
+    private $hasReturnMatch;
+
 
     /**
      * Get id
@@ -177,6 +184,31 @@ class GameOptions
         $this->nbTeamsSelectedByGroups = $nbTeamsSelectedByGroups;
 
         return $this;
+    }
+
+
+    /**
+     * Set hasReturnMatch
+     *
+     * @param boolean $hasReturnMatch
+     *
+     * @return Tournament
+     */
+    public function setHasReturnMatch($returnMatch)
+    {
+        $this->hasReturnMatch = $returnMatch;
+
+        return $this;
+    }
+
+    /**
+     * Get hasReturnMatch
+     *
+     * @return bool
+     */
+    public function getHasReturnMatch()
+    {
+        return $this->hasReturnMatch;
     }
 
     /**
