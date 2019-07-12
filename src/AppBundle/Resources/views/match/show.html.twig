@@ -3,6 +3,9 @@
 {% block body %}
     {% set displayStartButton = "display: none" %}
 
+    <div class="messageModal alert--warning" id="flashMessage" style="margin-top: 10px; text-align: center; font-weight: bold; display: none">
+    </div>
+
     <h1 class="matchH1">
         <span class="blueTitle">{{ match.teamA.name }}</span><br/>
         &nbsp;vs&nbsp;<br/>
@@ -99,6 +102,8 @@
 
 
     <script type="text/javascript">
+
+        let finalRound = "{{ match.tournament.competitionType }}";
 
         $('.refereeName').click(function(){
             let user_id = $(this).attr('id').split('-')[1];
@@ -211,12 +216,26 @@
         })
 
         $('#endButton').click(function() {
-            let timerId = sessionStorage.getItem('timerId');
-            clearInterval(timerId);
-            $('#pauseButton').hide();
-            $('#endButton').hide();
-            $('#validButton').show();
-            sessionStorage.setItem('status', 'end');
+
+            let scoreA = parseInt($('#pointA').html());
+            let scoreB = parseInt($('#pointB').html());
+
+            if(scoreA == scoreB && finalRound == "FINAL-ROUND") {
+                let message = 'Attention ! <br/>Vous ne pouvez pas avoir un match nul sur un tournoi à éliminination directe.';
+                $('#flashMessage').html(message);
+                $('#flashMessage').show();
+                setTimeout(function() { $('#flashMessage').hide(); }, 5000);
+            } else {
+                let timerId = sessionStorage.getItem('timerId');
+                clearInterval(timerId);
+                $('#pauseButton').hide();
+                $('#endButton').hide();
+                $('#validButton').show();
+                sessionStorage.setItem('status', 'end');
+            }
+
+
+
 
 
         })

@@ -3,6 +3,14 @@
 {% block body %}
 
 <h1>
+  {% if tournament.hasGroupRound == 1 %}
+    <a href="{{ path('showMatchGroup', {'tournamentId' : tournament.id})}}" style="float: left" title="voir phase finale">
+      <i class="fas fa-exchange-alt"></i>
+    </a>
+  {% endif %}
+  {% if tournament.isOpen == 1%}
+      <i class="fas fa-running"></i>
+  {% endif %}
   {{ tournament.name }}<br/>
   <span style="font-weight: normal; font-size: 0.7em; font-style: italic">Tableau final</span>
 </h1>

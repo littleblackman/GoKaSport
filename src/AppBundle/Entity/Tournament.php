@@ -127,6 +127,13 @@ class Tournament extends LbmExtensionEntity
     private $teams;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_group_round", type="boolean", nullable=true)
+     */
+    private $hasGroupround;
+
+    /**
     * @var ArrayCollection
     * @ORM\OneToMany(targetEntity="TournamentGroup", mappedBy="tournament", cascade={"persist", "remove"}))
     */
@@ -426,6 +433,24 @@ class Tournament extends LbmExtensionEntity
         return "btn--info";
     }
 
+
+    /**
+     * Get isOpen
+     *
+     * @return bool
+     */
+    public function getHasGroupRound()
+    {
+        return $this->hasGroupround;
+    }
+
+
+    public function setHasGroundRound($val)
+    {
+        $this->hasGroupround = $val;
+        return $this;
+    }
+
     /**
      * Set isInit
      *
@@ -492,6 +517,38 @@ class Tournament extends LbmExtensionEntity
     public function getTeams()
     {
         return $this->teams;
+    }
+
+    public function getTeamsSelecteds()
+    {
+        // nbteamBygroups
+        $NbTeamsSelectedByGroup = $this->getGameOptions()->getNbTeamsSelectedByGroups();
+
+         $i = 0;
+          for($i = 0; $i < $NbTeamsSelectedByGroup; $i++) {
+            foreach($this->getGroups() as $group)
+            {
+                $rankings = $group->getRankings();
+                $currentRank = $rankings[$i];
+                $teamsSelecteds[] = $currentRank->getTeam();
+                $teamsSelectedsId[] = $currentRank->getTeam()->getId();
+            }
+          }
+
+          $left = $this->getGameOptions()->getNbTeamsRoundFinal()-count($teamsSelecteds);
+          if( $left> 0) {
+              $i = 0;
+              foreach($this->getRankings() as $rank)
+              {
+                  if(!in_array($rank->getTeam()->getId(), $teamsSelectedsId)) {
+                      $teamsSelecteds[] = $rank->getTeam();
+                      $i++;
+                  }
+                  if($i == $left) break;
+              }
+          }
+
+          return $teamsSelecteds;
     }
 
     public function addUser($user)

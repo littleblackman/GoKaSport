@@ -20,6 +20,9 @@ use Symfony\Component\HttpFoundation\Response;
 class SecurityController extends Controller
 {
 
+   /**
+    * @Route("/login", name="login")
+    */
     public function loginAction(Request $request)
     {
 
@@ -30,7 +33,7 @@ class SecurityController extends Controller
 
             $authenticationUtils = $this->get('security.authentication_utils');
 
-            return $this->render('AppBundle:Security:login.html.twig', array(
+            return $this->render('@App/security/login.html.twig', array(
                   'last_username' => $authenticationUtils->getLastUsername(),
                   'error'         => $authenticationUtils->getLastAuthenticationError(),
              ));
@@ -68,7 +71,7 @@ class SecurityController extends Controller
     public function registerAction(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
     {
 
-    
+
         foreach($this->fixtures() as $data) {
 
                 $firstname = trim($data['firstname']);

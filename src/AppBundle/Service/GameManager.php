@@ -132,7 +132,7 @@ class GameManager
       $gameOptions = $tournament->getGameOptions();
       $gameOptions->setNbStepRoundFinal($nbStepRoundFinal);
       $gameOptions->setNbTeamsRoundFinal($totalTeams);
-      $gameOptions->setNbTeamsSelectedByGroups($totalTeams/$gameOptions->getNbGroupsFirstRound());
+      $gameOptions->setNbTeamsSelectedByGroups(floor($totalTeams/$gameOptions->getNbGroupsFirstRound()));
       $em->persist($tournament);
       $em->persist($gameOptions);
       $em->flush();
@@ -216,18 +216,9 @@ class GameManager
   {
       $gameOptions = $tournament->getGameOptions();
 
-      // nbteamBygroups
-      $NbTeamsSelectedByGroup = $gameOptions->getNbTeamsSelectedByGroups();
-      // order teams
-      $i = 0;
-      for($i = 0; $i < $NbTeamsSelectedByGroup; $i++) {
-        foreach($tournament->getGroups() as $group)
-        {
-            $rankings = $group->getRankings();
-            $currentRank = $rankings[$i];
-            $teamSelecteds[] = $currentRank->getTeam();
-        }
-      }
+      // order teamSelected
+      $teamSelecteds = $tournament->getTeamsSelecteds();
+
       // get last round
       $round = $tournament->getFinalRounds()[0];
 
@@ -266,6 +257,7 @@ class GameManager
       /*
         delete from match_game WHERE final_round_id is not null;
         delete from tournament_final_round;
+        update tournament set competition_type = "GROUP-ROUND" where id = 2;
       */
 
   }
@@ -291,6 +283,8 @@ class GameManager
 
           // add group to tournament
           $tournament->addGroup($group);
+
+          $tournament->setHasGroundRound(1);
 
           $tournament->setCompetitionType('GROUP-ROUND');
 

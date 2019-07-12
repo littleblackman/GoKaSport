@@ -3,17 +3,34 @@
 {% block body %}
 
 <h1>
+  {% if tournament.competitionType == 'FINAL-ROUND' %}
+    <a href="{{ path('showMatchFinalRound', {'tournamentId' : tournament.id})}}" style="float: left" title="voir phase finale">
+    <i class="fas fa-exchange-alt"></i>
+    </a>
+  {% endif %}
   {% if tournament.isOpen == 1%}
       <i class="fas fa-running"></i>
   {% endif %}
   {{ tournament.name }}
 </h1>
 
+
+
 <div class="tabs js-tabs">
   <nav class="tabs-menu">
-    <a href="#tab1" class="tabs-menu-link blockTab is-active">Voir les Matchs</a>
+    {% if tournament.competitionType == 'FINAL-ROUND' %}
+      <a href="#tab4" class="tabs-menu-link blockTab is-active">Equipes Qualifées</a>
+      {% set is_active = "" %}
+      {% set display = "display: none" %}
+
+    {% else %}
+      {% set is_active = "is-active" %}
+      {% set display = "" %}
+    {% endif %}
+    <a href="#tab1" class="tabs-menu-link blockTab {{ is_active }}">Voir les Matchs</a>
     <a href="#tab2" class="tabs-menu-link blockTab">Voir le Classement</a>
     <a href="#tab3" class="tabs-menu-link blockTab">Voir les Groupes</a>
+
   </nav>
 
   {% if tournament.isOpen != 1 %}
@@ -25,7 +42,7 @@
     </a>
   {% endif %}
 
-  <div id="tab1" class="tabs-content-item groupList">
+  <div id="tab1" class="tabs-content-item groupList" style="{{ display}}">
 
       {% for group in tournament.groups %}
           <div class="groupName">
@@ -77,6 +94,20 @@
 
       {% endfor %}
   </div>
+
+  <div id="tab4" class="tabs-content-item groupList">
+    Liste
+    <div class="teamsGroup">
+      <ul>
+        {% for teamSelected in tournament.teamsSelecteds %}
+          <li>
+            {{teamSelected.name}}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  <div>
 
   <hr/>
 
