@@ -95,19 +95,20 @@
       {% endfor %}
   </div>
 
-  <div id="tab4" class="tabs-content-item groupList">
-    Liste
-    <div class="teamsGroup">
-      <ul>
-        {% for teamSelected in tournament.teamsSelecteds %}
-          <li>
-            {{teamSelected.name}}
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-
-  <div>
+  {% if tournament.nbMatchLeft == 0 %}
+    <div id="tab4" class="tabs-content-item groupList">
+      Liste
+      <div class="teamsGroup">
+        <ul>
+          {% for teamSelected in tournament.teamsSelecteds %}
+            <li>
+              {{teamSelected.name}}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    <div>
+  {% endif %}
 
   <hr/>
 
@@ -149,6 +150,12 @@
         return false;
 
       })
+
+      if( "{{ tournament.competitionType}}" == "GROUP-ROUND"  ) {
+        setInterval(function() {
+          document.location.reload(true);
+        }, 10000);
+     }
 
   </script>
 

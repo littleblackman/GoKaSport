@@ -522,7 +522,7 @@ class Tournament extends LbmExtensionEntity
     public function getTeamsSelecteds()
     {
         // nbteamBygroups
-        $NbTeamsSelectedByGroup = $this->getGameOptions()->getNbTeamsSelectedByGroups();
+        if(!$NbTeamsSelectedByGroup = $this->getGameOptions()->getNbTeamsSelectedByGroups()) return null;
 
          $i = 0;
           for($i = 0; $i < $NbTeamsSelectedByGroup; $i++) {
